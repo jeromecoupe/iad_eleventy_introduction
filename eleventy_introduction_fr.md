@@ -96,14 +96,14 @@ Eleventy va maintenant copier ces dossiers ainsi que tout ce qu'ils contiennent.
 
 ### Ignorer certains dosiers et fichiers
 
-Par defaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre fichier `.gitignore`. Nous pouvons également créer un fichier `.eleventyignore` et placer un dossier, fichier ou glob par ligne pour explicitement spécifier les dossier et fichier à ignorer dans notre dossier source. Nous pouvons par exemple dire à Eleventy d'ignorer le contenu de l'ensemble de notre dossier assets, qui contiendra des fichiers CSS/SCSS/JS pris en charge par notre outil de build (Gulp dans ce cas).
+Par defaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre fichier `.gitignore`. Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour spécifier les dossiers et fichiers à ignorer dans notre dossier source. A part les fichiers de polices et les images déjà copiés par Eleventy, le dossier `./src/assets` ne contiendra que des fichiers CSS/SCSS/JS pris en charge par notre outil de build (Gulp dans ce cas-ci). Nous pouvons donc simplement dire à Eleventy d'ignorer ce dossier dans son ensemble.
 
 `.eleventyignore`
 ```txt
 ./src/assets/
 ```
 
-Nous avons maintenant une bonne configuration de base pour la suite de notre projet. Nous reviendrons à ce fichier de configuration lorsque nous aborderons les collections dans le chapitre suivant.
+Nous avons maintenant une solide configuration de base pour la suite de notre projet. Nous reviendrons à ce fichier de configuration lorsque nous aborderons les collections dans le chapitre suivant.
 
 ## 3. Définir et structurer vos données
 

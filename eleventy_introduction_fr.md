@@ -103,6 +103,8 @@ Par defaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers
 ./src/assets/
 ```
 
+Nous avons maintenant une bonne configuration de base pour la suite de notre projet. Nous reviendrons à ce fichier de configuration lorsque nous aborderons les collections dans le capitre suivant.
+
 ## 3. Définir et structurer vos données
 
 - deux types de sources de données

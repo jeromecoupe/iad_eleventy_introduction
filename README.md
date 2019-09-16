@@ -1,2 +1,3 @@
-# iad_eleventy
-An introduction to Eleventy
+# Introduction to Eleventy (11ty)
+
+An introduction to Eleventy for my course at IAD.

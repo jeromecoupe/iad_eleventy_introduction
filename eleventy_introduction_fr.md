@@ -96,26 +96,226 @@ Eleventy va maintenant copier ces dossiers ainsi que tout ce qu'ils contiennent.
 
 ### Ignorer certains dosiers et fichiers
 
-Par defaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre fichier `.gitignore`. Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour spécifier les dossiers et fichiers à ignorer dans notre dossier source. A part les fichiers de polices et les images déjà copiés par Eleventy, le dossier `./src/assets` ne contiendra que des fichiers CSS/SCSS/JS pris en charge par notre outil de build (Gulp dans ce cas-ci). Nous pouvons donc simplement dire à Eleventy d'ignorer ce dossier dans son ensemble.
+Par defaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre fichier `.gitignore`. Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour dire à Eleventy de les ignorer dans notre dossier source. A part les fichiers de polices et les images déjà copiés par Eleventy, le dossier `./src/assets` ne contiendra que des fichiers CSS/SCSS/JS pris en charge par notre outil de build (Gulp dans ce cas-ci). Nous pouvons donc simplement dire à Eleventy d'ignorer ce dossier dans son ensemble:
 
 `.eleventyignore`
+
 ```txt
 ./src/assets/
 ```
 
 Nous avons maintenant une solide configuration de base pour la suite de notre projet. Nous reviendrons à ce fichier de configuration lorsque nous aborderons les collections dans le chapitre suivant.
 
+### Intégrer Eleventy et Gulp
+
+Eleventy ne possède pas d'asset pipeline pour vous permettre d'utiliser Sass ou Webpack. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp ou toute autre alternative.
+
+Personellement, j'utilise Gulp et Webpack. Voici une version simplifiée d'un fichier `gulpfile.js` standard:
+
+```js
+// required packages
+const sass = require("gulp-sass");
+const postcss = require("gulp-postcss");
+const autoprefixer = require("autoprefixer");
+const cssnano = require("cssnano");
+const rename = require("gulp-rename");
+const gulp = require("gulp");
+const webpack = require("webpack");
+const webpackConfig = require("./webpack.config.js");
+const childProcess = require("child_process");
+const del = require("del");
+const browsersync = require("browser-sync").create();
+
+// browsersync server
+function server(done) {
+  browsersync.init({
+    server: "./dist/",
+    files: ["./dist/assets/css/*.css", "./dist/assets/js/*.js", "./dist/*.{html, xml}", "./dist/**/*.{html, xml}"],
+    port: 3000,
+    open: false
+  });
+  done();
+}
+
+// clean dist folder
+function clean() {
+  return del(["./dist/"]);
+}
+
+// build styles (sass)
+function stylesBuild() {
+  return gulp
+    .src("./src/assets/scss/main.scss")
+    .pipe(sass({ outputStyle: "expanded" }))
+    .pipe(gulp.dest("./dist/assets/css/"))
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(postcss([autoprefixer(), cssnano()]))
+    .pipe(gulp.dest("./dist/assets/css/"));
+}
+
+// JS scripts (webpack: transpile, lint, minify)
+function scriptsBuild() {
+  return new Promise((resolve, reject) => {
+    webpack(webpackConfig, (err, stats) => {
+      const info = stats.toJson();
+
+      if (err) {
+        return reject(err);
+      }
+
+      if (stats.hasErrors()) {
+        return reject(info.errors);
+      }
+
+      if (stats.hasWarnings()) {
+        return reject(info.warnings);
+      }
+
+      console.log(
+        stats.toString({
+          chunks: false,
+          colors: true
+        })
+      );
+
+      resolve();
+    });
+  });
+}
+
+// Run Eleventy
+function eleventyBuild() {
+  return childProcess.spawn("npx", ["eleventy", "--quiet"], {
+    stdio: "inherit"
+  });
+}
+
+//
+function watchFiles() {
+  gulp.watch("./src/assets/scss/**/*", stylesBuild);
+  gulp.watch("./src/assets/js/**/*", scriptsBuild);
+  gulp.watch(["./.eleventy.js", "./src/**/*", "!./src/assets/js/**/*", "!./src/assets/scss/**/*"], eleventyBuild);
+}
+
+const watch = gulp.parallel(server, watchFiles);
+const build = gulp.series(clean, gulp.parallel(stylesBuild, scriptsBuild, eleventyBuild));
+
+exports.build = build;
+exports.watch = watch;
+```
+
+Eleventy est maintenant intégré à notre workflow Gulp et les commandes `gulp build` et `gulp watch` intègrent toutes deux Eleventy.
+
 ## 3. Définir et structurer vos données
 
-- deux types de sources de données
+Eleventy permet de travailler avec deux grandes sources de données:
 
-#### Collections (markdown et YAML front matter)
+- des fichiers Markdown (pour le contenu principal) et YAML front matter (pour le reste de la data structures) qui peuvent être facilement convertis en collections.
+- des fichiers JSON et/ou JS qui peuvent soit petre statiques soit dynamiques (provenant d'une API).
 
-- Markdown et YAML front matter
-- collection API avec .eleventy.js
-- accessibles à partir de l'object collections
-- une collection spéciale: collections.all
-- valeurs par defaut et fichiers de directory (JS ou JSON)
+Ces deux sources de données ne sont pas mutuellement exclusives et sont généralement utilisées simultanément dans tout projet. Voyons cela plus en détail.
+
+#### Collections
+
+##### Markdown et YAML front matter
+
+Les fichiers Markdown couplés à un YAML front matter permettent d'utiliser de simples fichiers textes comme source de données structurées. C'est un classique avec la plupart des SSG.
+
+La partie en Markdown représente le contenu principal de vos données et est généralement simplement converti en HTML. Le YAML front matter permet de créer votre data structure à l'aide de différents types de données (tableaux, strings, objets, etc.).
+
+Si vous devez par exemple construire un blog, vos blogposts seront chacun représenté par un fichier Markdown avec un YAML front matter qui ressemble à ceci.
+
+**./src/blog/2019-07-22--markdown-yaml-front-matter.md**
+
+```txt
+---
+title: "This is the title"
+intro: "This is an introductory sentence for a blogpost"
+categories: ["front-end", "JAMstack", "Eleventy"]
+---
+This is the main content of my blogpost
+```
+
+##### Collection API
+
+Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une oou plusieurs collections.
+
+Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personellement, je préfère utiliser l'API collection et le fichier `eleventy.js`.
+
+Cette collection API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les éléments de contenus qui correspondent au même glob pattern.
+
+Si tous vos fichiers markdown sont placé dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `eleventy.js`
+
+```js
+module.exports = function(eleventyConfig) {
+  // blogposts collection
+  eleventyConfig.addCollection("blogposts", function(collection) {
+    return collection.getFilteredByGlob("./src/blog/*.md");
+  });
+
+  // override default config
+  return {
+    dir: {
+      input: "./src",
+      output: "./dist"
+    }
+  };
+};
+```
+
+Vous pouvez maintenant accéder à votre collection en utilisant `collections.blogposts`. Nous y reviendrons dans le chapitre consacrée au templating.
+
+Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est à dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
+
+Lorsqu'une collection est créée, les key suivantes sont automatiquement créées. Les keys créées dans votre front matter sont accessibles via `data`.
+
+- `inputPath`: the full path to the source input file (including the path to the input directory)
+- `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy)
+- `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.io/docs/data/#fileslug).
+- `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu
+- `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la key `permalink`
+- `date`: la date utilisée pour le classement. Pour en savoir plus sur les [dates des éléments de contenus](https://www.11ty.io/docs/dates/), référez-vous à la documentation.
+- `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritée des layouts.
+- `templateContent`: le contenu de ce template une fois rendu par Eleventy. N'inclus pas les templates étendus.
+
+##### Classer et filtrer vos collections
+
+Lorsque vous crééez une collection avec l'API d'Eleventy, les items de cette collection sont automatiquement classés en ordre ascendant en utilisant:
+
+1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source ou, a defaut, la date de création de celui-ci.
+2. Si certains fichiers source ont une date identique, le chemin complet (y compris le nom de fichier) est pris en compte
+
+Si un classement par date correspond à ce que vous souhaitez, vous pouvez évntuyellement inverser celui-ci en utilisant le filtre `reverse` de Nunjucks.
+
+Pour classer les élements d'une collection sur d'autres critères, il vous faudra simplement utiliser JavaScript et la methode `sort`. Admetons par exemple que vous deviez classer des membres de l'équipe alphabétiquement sur base de leurs noms. Chaque team member à une key `surname` dans le YAML front matter de son fichier Markdown. Le code suivant classera ces team members par ordre ascendant sur base de leurs noms.
+
+```js
+// Team collection
+eleventyConfig.addCollection("team", function(collection) {
+  return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
+    let nameA = a.data.surname.toUpperCase();
+    let nameB = b.data.surname.toUpperCase();
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  });
+});
+```
+
+Si vous devez par contre filtrer un collection pour exclure certaines données, il vous faura utiliser la méthode `filter` en JavaScript. Vous pouvez par exemple exclure de la collection `blogposts` les items ayant une key `draft` dont la valeur est `true`.
+
+```js
+// blogposts collection
+eleventyConfig.addCollection("blogposts", function(collection) {
+  return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
+    return item.data.draft !== true;
+  });
+});
+```
+
+##### Valeurs par defaut et fichiers données liés aux dossiers
+
+@TODO
 
 #### Data files (JS ou JSON)
 
@@ -147,6 +347,22 @@ Nous avons maintenant une solide configuration de base pour la suite de notre pr
 ### Boucles et structures de contrôle
 
 - for et loop
+
+```twig
+{% for item in collections.blogposts | reverse %}
+  {% if loop.first %}<ul>{% endif %}
+    <li>
+      <article>
+        <h2><a href="{{ item.url }}">{{ item.title }}</h2>
+        <p>{{ item.data.intro }}</p>
+      </article>
+    </li>
+  {% if loop.last %}</ul>{% endif %}
+{% else %}
+  <p>No blogpost found</p>
+{% endfor %}
+```
+
 - conditionnels if / else
 
 ### Filtres

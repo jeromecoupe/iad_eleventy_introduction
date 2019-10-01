@@ -98,7 +98,7 @@ Eleventy va maintenant copier ces dossiers ainsi que tout ce qu'ils contiennent.
 
 Par defaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre fichier `.gitignore`. Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour dire à Eleventy de les ignorer dans notre dossier source. A part les fichiers de polices et les images déjà copiés par Eleventy, le dossier `./src/assets` ne contiendra que des fichiers CSS/SCSS/JS pris en charge par notre outil de build (Gulp dans ce cas-ci). Nous pouvons donc simplement dire à Eleventy d'ignorer ce dossier dans son ensemble:
 
-`.eleventyignore`
+**.eleventyignore**
 
 ```txt
 ./src/assets/
@@ -114,17 +114,17 @@ Personellement, j'utilise Gulp et Webpack. Voici une version simplifiée d'un fi
 
 ```js
 // required packages
-const sass = require("gulp-sass");
-const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
+const browsersync = require("browser-sync").create();
+const childProcess = require("child_process");
 const cssnano = require("cssnano");
-const rename = require("gulp-rename");
+const del = require("del");
 const gulp = require("gulp");
+const postcss = require("gulp-postcss");
+const rename = require("gulp-rename");
+const sass = require("gulp-sass");
 const webpack = require("webpack");
 const webpackConfig = require("./webpack.config.js");
-const childProcess = require("child_process");
-const del = require("del");
-const browsersync = require("browser-sync").create();
 
 // browsersync server
 function server(done) {
@@ -225,15 +225,21 @@ La partie en Markdown représente le contenu principal de vos données et est g�
 
 Si vous devez par exemple construire un blog, vos blogposts seront chacun représenté par un fichier Markdown avec un YAML front matter qui ressemble à ceci.
 
-**./src/blog/2019-07-22--markdown-yaml-front-matter.md**
+**./src/blog/2019-07-22-markdown-yaml-front-matter.md**
 
-```txt
+```md
 ---
 title: "This is the title"
 intro: "This is an introductory sentence for a blogpost"
-categories: ["front-end", "JAMstack", "Eleventy"]
+categories:
+- front-end
+- JAMstack
+- Eleventy
 ---
-This is the main content of my blogpost
+
+## Level 2 title
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibus reiciendis dignissimos accusantium illo, voluptates consequuntur fugit amet quo sed nisi facere animi incidunt assumenda exercitationem, nam omnis perspiciatis praesentium.
 ```
 
 ##### Collection API
@@ -313,23 +319,111 @@ eleventyConfig.addCollection("blogposts", function(collection) {
 });
 ```
 
-##### Valeurs par defaut et fichiers données liés aux dossiers
-
-@TODO
-
 #### Data files (JS ou JSON)
 
-- fichiers statiques
-- fichiers dynamiques connectés à un endpoint API
-- données accessibles en utilisant le nom de fichier comme key
-- exemple avec des valeurs en key / value pairs (site.js)
-- exemple avec un tableau d'objets en provenance d'une API
+Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers data. Ceux-ci peuvent être statiques ou dynamiques.
+
+Ces fichiers doivent par defaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers data peut être modifié dans votre fichier de configuration `.eleventy.js`.
+
+```js
+module.exports = function(eleventyConfig) {
+  // override default config
+  return {
+    dir: {
+      input: "./src/",
+      output: "./dist/",
+      data: "./mydata/"
+    }
+  };
+};
+```
+
+##### Fichiers data statiques
+
+Les fichiers de data statiques sont simplement des fichiers JSON ou JS contenant des key et des values.
+
+`./src/_data/site.js`
+
+```js
+module.exports = {
+  title: "Title of the site",
+  description: "Description of the site",
+  url: "https://www.mydomain.com",
+  baseUrl: "/",
+  author: "Name Surname",
+  authorTwitter: "@twitterhandle",
+  buildTime: new Date()
+};
+```
+
+Les données sont accessibles dans vos templates à l'aide des noms de fichier utilisé comme key. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`.
+
+##### Fichiers data dynamiques
+
+Etant donné que les fichiers de data sont rédigés en JavaScript, rien ne vous empèche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
+
+A chaque fois que votre site est généré, Eleventy fera tourner votre script et traitera le JSON retourné par l'API comme un fichier de données statique pour générer vos pages.
 
 ### Permalinks et URLs
 
-- simple permalink
-- permalink false
-- utilisation de variables dans les permalinks
+Par defaut, Eleventy utilise votre structure de dossiers et vos fichiers et dans votre directory source pour générer des fichiers statiques dans votre dossier de sortie.
+
+- `./src/index.html` va générer `./dist/index.html` avec comme URL `/`
+- `./src/test.html` va générer `./dist/test/index.html` avec comme URL `/test/`
+- `./src/subdir/index.html` va générer `./dist/subdir/index.html` avec comme URL `/subdir/`
+
+Cela peut être surdéterminé par l'utilisation d'une variable `permalink` statique ou dyanmique dans vos fichiers de contenus ou dans vos templates.
+
+Pour créer un blog, vous aller avoir besoin d'une page d'index `/blog/index.html`. Votre template Nunjucks `./src/pages/blog.njk` pourra donc avoir cette URL comme valeur de la key `permalink` dans son YAML front matter.
+
+```text
+---
+permalink: "blog/index.html"
+---
+```
+
+Vous pouvez également utiliser des variables pour créer vos valeurs de `permalink`.
+
+```text
+---
+permalink: "blog/{{ page.fileSLug }}/index.html"
+---
+```
+
+Si vous avez une collection pour présenter vos projets mais que vous n'avez pas de page de détail, vous pouvez simplement utiliser la valeur `false` pour `permalink` et Eleventy ne générera alors pas de pages de détail. Dans la plupart des cas, vous n'aurez alors pas besoin de layout non plus.
+
+```text
+---
+permalink: false
+layout: false
+---
+```
+
+Nous verrons plus loin que vous aurez alors besoin d'utiliser `templateContent` pour afficher le contenu de vos fichiers Markdown.
+
+##### Valeurs par defaut et fichiers de données liés aux dossiers
+
+Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une colelction, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un directory en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
+
+Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blogposts/blogposts.json`, `.src/blogposts/blogposts.11data.json` ou `.src/blogposts/blogposts.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du directory ou des directory enfants.
+
+**./src/blogposts/blogposts.json` ou `./src/blogposts/blogposts.11tydata.json**
+
+```json
+{
+  "layout": "layouts/blogpost.njk",
+  "permalink": "blog/{{ page.fileSlug }}/index.html"
+}
+```
+
+**./src/blogposts/blogposts.11tydata.js**
+
+```js
+module.exports = {
+  layout: "layouts/blogpost.njk",
+  permalink: "blog/{{ page.fileSlug }}/index.html"
+};
+```
 
 ## 4. Templating
 
@@ -341,7 +435,6 @@ eleventyConfig.addCollection("blogposts", function(collection) {
 ### DRY: layout et includes
 
 - layouts et héritage avec Nunjucks
-
 - includes (header et footer)
 
 ### Boucles et structures de contrôle

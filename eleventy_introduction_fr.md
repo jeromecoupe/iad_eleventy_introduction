@@ -6,7 +6,7 @@
 
 [Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/) écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
 
-Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tour d'abord, Eleventy est écrit en Node et vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser une large gamme de langages de templating. Nous utiliserons Nunjucks par Mozilla.
+Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tour d'abord, Eleventy est écrit en Node et vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser une large gamme de langages de templating. Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de Mozilla.
 
 ## 2. Installation and configuration
 
@@ -67,7 +67,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Si nous exécutons la commande `npx eleventy` dans notre terminal, Eleventy générera un dossier `./dist` et y copier notre fichier `index.html`.
+Si nous exécutons la commande `npx eleventy` dans notre terminal, Eleventy générera un dossier `./dist` pour y copier notre fichier `index.html`.
 
 ### Copier quelques fichiers tels quels
 
@@ -111,9 +111,7 @@ Nous avons maintenant une solide configuration de base pour la suite de notre pr
 
 ### Intégrer Eleventy et Gulp
 
-Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
-
-Personnellement, j'utilise Gulp et Webpack. Voici une version simplifiée d'un fichier `gulpfile.js`:
+Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.  Personnellement, j'utilise Gulp et Webpack. Voici une version simplifiée d'un fichier `gulpfile.js` classique:
 
 ```js
 // required packages
@@ -166,17 +164,9 @@ function scriptsBuild() {
     webpack(webpackConfig, (err, stats) => {
       const info = stats.toJson();
 
-      if (err) {
-        return reject(err);
-      }
-
-      if (stats.hasErrors()) {
-        return reject(info.errors);
-      }
-
-      if (stats.hasWarnings()) {
-        return reject(info.warnings);
-      }
+      if (err) { return reject(err); }
+      if (stats.hasErrors()) { return reject(info.errors); }
+      if (stats.hasWarnings()) { return reject(info.warnings); }
 
       console.log(
         stats.toString({
@@ -229,13 +219,13 @@ Eleventy est maintenant intégré à notre workflow Gulp et les commandes `gulp 
 Eleventy permet de travailler avec deux grandes sources de données:
 
 1. **des fichiers Markdown** (pour le contenu principal) et YAML front matter (pour le reste de la data structure) qui peuvent être facilement convertis en collections.
-- **des fichiers JSON et/ou JS** qui peuvent soit être statiques soit dynamiques (provenant d'une API).
+2. **des fichiers JSON et/ou JS** qui peuvent soit être statiques soit dynamiques (provenant d'une API).
 
 Ces deux sources de données ne sont pas mutuellement exclusives et sont généralement utilisées simultanément dans tout projet. Voyons cela plus en détail.
 
-#### Collections
+### Collections
 
-##### Markdown et YAML front matter
+#### Markdown et YAML front matter
 
 Les fichiers Markdown couplés à un YAML front matter permettent d'utiliser de simples fichiers textes comme source de données structurées. C'est un classique avec la plupart des SSG.
 
@@ -281,7 +271,7 @@ website: "https://www.webstoemp.com"
 Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not coding, he might have been seen drinking a few craft beers with friends.
 ```
 
-##### Collection API
+#### Collection API
 
 Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou de plusieurs collections.
 
@@ -327,7 +317,7 @@ Lorsqu'une collection est créée, les key suivantes sont automatiquement créé
 - `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritée des layouts.
 - `templateContent`: le contenu de ce template une fois rendu par Eleventy. N'inclus pas les templates étendus.
 
-##### Classer et filtrer vos collections
+#### Classer et filtrer vos collections
 
 Lorsque vous créez une collection avec l'API d'Eleventy, les items de cette collection sont automatiquement classés en ordre ascendant en utilisant:
 
@@ -374,7 +364,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-#### Data files (JS ou JSON)
+### Data files (JS ou JSON)
 
 Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de data. Ceux-ci peuvent être statiques ou dynamiques.
 
@@ -396,7 +386,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-##### Fichiers data statiques
+#### Fichiers data statiques
 
 Les fichiers de data statiques sont simplement des fichiers JSON ou JS contenant des paires key / value.
 
@@ -416,7 +406,7 @@ module.exports = {
 
 Les données sont accessibles dans vos templates à l'aide du nom de fichier utilisé comme key. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`.
 
-##### Fichiers data dynamiques
+#### Fichiers data dynamiques
 
 Etant donné que les fichiers de data sont rédigés en JavaScript, rien ne vous empèche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
 
@@ -459,7 +449,7 @@ layout: false
 
 Nous verrons plus loin que vous aurez alors besoin d'utiliser `templateContent` pour afficher le contenu de vos fichiers Markdown.
 
-##### Valeurs par défaut et fichiers de données liés aux dossiers
+#### Valeurs par défaut et fichiers de données liés aux dossiers
 
 Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un directory en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
 
@@ -655,6 +645,15 @@ Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 </html>
 ```
 
+Voici un exemple simple de fichier inclus utilisé pour le footer.
+
+**./src/_includes/partials/blogpost.njk**
+```njk
+<div class="c-sitefooter">
+  <p>&copy; {{ site.buildTime | date("Y") }} - La casa productions</p>
+</div>
+```
+
 Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va venir étendre notre layout de base. Ce layout de blogpost va être utilisé par tous les fichiers Markdown de notre collection pour afficher les page de détail.
 
 **./src/_includes/layouts/blogpost.njk**
@@ -673,11 +672,11 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
             <source srcset="/assets/img/blogposts/{{ imageMedium }} 1024w,
                             /assets/img/blogposts/{{ imageBig }} 1500w"
                     sizes="(min-width: 1140px) 1140px,
-                          100vw"
+                           100vw"
                     media="(min-width: 500px)">
             <img src="/assets/img/blogposts/{{ imageSmall }}"
-                  class="o-fluidimage"
-                  alt="{{ imageAlt }}">
+                 class="o-fluidimage"
+                 alt="{{ imageAlt }}">
         </picture>
       </div>
 
@@ -691,7 +690,7 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
           </div>
         </header>
 
-        <div class="c-wysiwyg">
+        <div class="u-markdown">
           {{ content | safe }}
         </div>
 
@@ -797,7 +796,7 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
 
 ### Pagination
 
-La fonction de pagination d'Eleventy est bien plus puissante qu'elle n'y parait au premier abord. Si les données pour nos blogposts provenaient d'une API, nous pourrions utiliser ce fichier `./src/_data/_blogposts.js` et la même fonction de pagionation pour générer toutes les pages de détail. Il suffirait de spécifier une valeur de `1` pour le paramètre `size` et de sppécifier la valeur de `permalink` correspondant aux URL souhaitées.
+La [fonction de pagination d'Eleventy](https://www.11ty.io/docs/pagination/) est bien plus puissante qu'elle n'y parait au premier abord. Si les données pour nos blogposts provenaient d'une API, nous pourrions utiliser ce fichier `./src/_data/_blogposts.js` et la même fonction de pagination pour générer toutes les pages de détail. Il suffit de spécifier une valeur de `1` pour le paramètre `size` et de préciser un pattern de `permalink` correspondant aux URL souhaitées.
 
 Voici un exemple de template simplifié:
 
@@ -810,12 +809,15 @@ pagination:
 permalink: blog/{{ blogpost.slug }}/index.html
 ---
 {% extends "layouts/base.njk" %}
+
 {% set metaTitle = blogpost.title %}
+{% set metaDescription = blogpost.intro %}
+{% set metaImage = site.url ~ "/assets/img/blogposts/" ~ blogpost.imageSmall %}
 
 {% block content %}
 
   <h1>{{ blogpost.title }}</h1>
-  <p><time datetime="{{ blogpost.date | date('Y-M-DD') }}">{{ blogpost.date|date("MMMM Do, Y") }}</time></p>
+  <p><time datetime="{{ blogpost.date | date('Y-M-DD') }}">{{ blogpost.date | date("MMMM Do, Y") }}</time></p>
   <p>{{ blogpost.intro }}</p>
   {{ blogpost.body | safe }}
 

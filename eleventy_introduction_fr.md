@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-[Eleventy](https://www.11ty.io) est un static site generator créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Comme tel, il n'utilise pas de base de données. Cet outil vous permet de développer des sites basés sur des templates (codés avec [Nunjucks](https://mozilla.github.io/nunjucks/) dans notre cas) et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
+[Eleventy](https://www.11ty.io) est un static site generator (SSG) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Comme tel, il n'utilise pas de base de données. Cet outil vous permet de développer des sites basés sur des templates (codés avec [Nunjucks](https://mozilla.github.io/nunjucks/) dans notre cas) et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
 
 [Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/) écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
 
@@ -38,7 +38,7 @@ Eleventy va simplement installer un dossier `node_modules` mais rien d'autre. Po
 Une fois ce fichier créé, nous pouvons tester les commandes principales d'Eleventy:
 
 - `npx eleventy`: pour faire tourner Eleventy
-- `npx eleventy --serve`: pour faire tourner Browsersync afin d'avoir un serveur web local avec du hot reloading
+- `npx eleventy --serve`: pour faire tourner Browsersync afin d'avoir un serveur web local qui va reloader le site dans votre browser dès que le site change
 - `npx eleventy --help`: pour avoir la liste des commandes existantes
 
 Vous connaissez maintenant les commandes de base, nécessaires pour commencer à travailler. Si vous tapez `npx eleventy`, Eleventy devrait créer pour vous un dossier `_site` et y placer une copie de votre fichier `index.html`.
@@ -75,14 +75,15 @@ Nous pouvons également utiliser ce fichier de configuration pour demander à El
 
 - créer un dossier `./src/assets/img/` et y placer un fichier image
 - créer un dossier `./src/assets/fonts/` et y placer quelques fichiers de polices
+- créer un dossier `./src/assets/js/` et y placer un fichier JavaScript
+- créer un dossier `./src/assets/css/` et y placer un fichier CSS
 
 Modifier le fichier `.eleventy.js` comme suit:
 
 ```js
 module.exports = function(eleventyConfig) {
   // copy files
-  eleventyConfig.addPassthroughCopy("./src/assets/img/");
-  eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
+  eleventyConfig.addPassthroughCopy("./src/assets/");
 
   // override default config
   return {
@@ -100,119 +101,16 @@ Eleventy va maintenant copier ces dossiers ainsi que tout ce qu'ils contiennent.
 
 Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre fichier `.gitignore`.
 
-Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour dire à Eleventy de les ignorer dans notre dossier source. A part les fichiers de polices et les images déjà copiés par Eleventy, le dossier `./src/assets` ne contiendra que des fichiers CSS/SCSS/JS pris en charge par notre outil de build (Gulp dans ce cas-ci). Nous pouvons donc simplement dire à Eleventy d'ignorer ce dossier dans son ensemble:
+Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour dire à Eleventy de les ignorer dans notre dossier source. Notre dossier `./src/assets` ne contiendra que des assets statiques copiés par Eleventy. Nous pouvons donc simplement dire à Eleventy d'ignorer ce dossier dans son ensemble:
 
 **.eleventyignore**
 ```txt
 ./src/assets/
 ```
 
+Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
+
 Nous avons maintenant une solide configuration de base pour la suite de notre projet. Nous reviendrons à ce fichier de configuration lorsque nous aborderons les collections dans le chapitre suivant.
-
-### Intégrer Eleventy et Gulp
-
-Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.  Personnellement, j'utilise Gulp et Webpack. Voici une version simplifiée d'un fichier `gulpfile.js` classique:
-
-```js
-// required packages
-const sass = require("gulp-sass");
-const postcss = require("gulp-postcss");
-const autoprefixer = require("autoprefixer");
-const cssnano = require("cssnano");
-const rename = require("gulp-rename");
-const gulp = require("gulp");
-const webpack = require("webpack");
-const webpackConfig = require("./webpack.config.js");
-const childProcess = require("child_process");
-const del = require("del");
-const browserSync = require("browser-sync").create();
-
-// browsersync server
-function server(done) {
-  browserSync.init({
-    server: "./dist/",
-    files: [
-      "./dist/assets/**/*",
-      "./dist/*.{html, xml}",
-      "./dist/**/*.{html, xml}"
-    ],
-    port: 3000,
-    open: false
-  });
-  done();
-}
-
-// clean dist folder
-function clean() {
-  return del(["./dist/"]);
-}
-
-// build styles (sass)
-function stylesBuild() {
-  return gulp
-    .src("./src/assets/scss/main.scss")
-    .pipe(sass({ outputStyle: "expanded" }))
-    .pipe(gulp.dest("./dist/assets/css/"))
-    .pipe(rename({ suffix: ".min" }))
-    .pipe(postcss([autoprefixer(), cssnano()]))
-    .pipe(gulp.dest("./dist/assets/css/"));
-}
-
-// JS scripts (webpack: transpile, lint, minify)
-function scriptsBuild() {
-  return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (err, stats) => {
-      const info = stats.toJson();
-
-      if (err) { return reject(err); }
-      if (stats.hasErrors()) { return reject(info.errors); }
-      if (stats.hasWarnings()) { return reject(info.warnings); }
-
-      console.log(
-        stats.toString({
-          chunks: false,
-          colors: true
-        })
-      );
-
-      resolve();
-    });
-  });
-}
-
-// Run Eleventy
-function eleventyBuild() {
-  return childProcess.spawn("npx", ["eleventy", "--quiet"], {
-    stdio: "inherit"
-  });
-}
-
-// Watch files
-function watchFiles() {
-  gulp.watch("./src/assets/scss/**/*", stylesBuild);
-  gulp.watch("./src/assets/js/**/*", scriptsBuild);
-  gulp.watch(
-    [
-      "./.eleventy.js",
-      "./src/**/*",
-      "!./src/assets/js/**/*",
-      "!./src/assets/scss/**/*"
-    ],
-    eleventyBuild
-  );
-}
-
-const watch = gulp.parallel(server, watchFiles);
-const build = gulp.series(
-  clean,
-  gulp.parallel(stylesBuild, scriptsBuild, eleventyBuild)
-);
-
-exports.build = build;
-exports.watch = watch;
-```
-
-Eleventy est maintenant intégré à notre workflow Gulp et les commandes `gulp build` et `gulp watch` vont toutes deux faire tourner Eleventy.
 
 ## 3. Définir et structurer vos données
 

@@ -297,9 +297,9 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-### Data files (JS ou JSON)
+### Fichiers de données (JS ou JSON)
 
-Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de données. Ceux-ci peuvent être statiques ou dynamiques.
+Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de données (data files). Ceux-ci peuvent être statiques ou dynamiques.
 
 Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `.eleventy.js`.
 
@@ -756,7 +756,6 @@ permalink: blog/{{ blogpost.slug }}/index.html
 
 {% endblock %}
 ```
-
 
 ### Exercice à faire ensemble
 

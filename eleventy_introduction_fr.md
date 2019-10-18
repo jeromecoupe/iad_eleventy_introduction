@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-[Eleventy](https://www.11ty.io) est un générateur de site statique (SSG en anglais abrégé) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Comme tel, il n'utilise pas de base de données. Cet outil vous permet de développer des sites basés sur des templates (codés avec [Nunjucks](https://mozilla.github.io/nunjucks/) dans notre cas) et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
+[Eleventy](https://www.11ty.io) est un générateur de site statique (Static Site Generator ou SSG en anglais) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Comme tel, il n'utilise pas de base de données. Cet outil vous permet de développer des sites basés sur des templates (codés avec [Nunjucks](https://mozilla.github.io/nunjucks/) dans notre cas) et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
 
 [Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/) écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
 

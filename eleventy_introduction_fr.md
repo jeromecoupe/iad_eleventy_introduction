@@ -2,17 +2,17 @@
 
 ## 1. Introduction
 
-[Eleventy](https://www.11ty.io) est un static site generator (SSG) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Comme tel, il n'utilise pas de base de données. Cet outil vous permet de développer des sites basés sur des templates (codés avec [Nunjucks](https://mozilla.github.io/nunjucks/) dans notre cas) et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
+[Eleventy](https://www.11ty.io) est un générateur de site statique (SSG en anglais abrégé) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Comme tel, il n'utilise pas de base de données. Cet outil vous permet de développer des sites basés sur des templates (codés avec [Nunjucks](https://mozilla.github.io/nunjucks/) dans notre cas) et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
 
 [Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/) écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
 
-Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tour d'abord, Eleventy est écrit en Node et vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser une large gamme de langages de templating. Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de Mozilla.
+Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tout d'abord, Eleventy est écrit en Node et vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser une large gamme de langages de templating. Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de Mozilla.
 
 ## 2. Installation and configuration
 
 ### Installation
 
-Commençons d'abord par créer un dossier pour notre projet
+Commençons d'abord par créer un dossier pour notre projet:
 
 ```text
 mkdir eleventy-portfolio
@@ -22,7 +22,7 @@ cd eleventy-portfolio
 L'installation se fait à l'aide d'un module NPM. Pour installer Eleventy, il faut commencer par créer dans notre projet un fichier `package.json` qui reprendra toutes nos dépendences Node.
 
 ```text
-npm init
+npm init -y
 ```
 
 Dans un premier temps, vous pouvez simplement accepter l'ensemble des réponses aux questions posées. Vous pourrez toujours y revenir par après en éditant votre fichier `package.json`. Voici la [documentation complète](https://docs.npmjs.com/files/package.json) pour vous aider à comprendre quelles sont les paramètres et options disponibles.
@@ -38,7 +38,7 @@ Eleventy va simplement installer un dossier `node_modules` mais rien d'autre. Po
 Une fois ce fichier créé, nous pouvons tester les commandes principales d'Eleventy:
 
 - `npx eleventy`: pour faire tourner Eleventy
-- `npx eleventy --serve`: pour faire tourner Browsersync afin d'avoir un serveur web local qui va reloader le site dans votre browser dès que le site change
+- `npx eleventy --serve`: pour faire tourner Browsersync afin d'avoir un serveur web local qui va recharger le site dans votre navigateur dès que le site change
 - `npx eleventy --help`: pour avoir la liste des commandes existantes
 
 Vous connaissez maintenant les commandes de base, nécessaires pour commencer à travailler. Si vous tapez `npx eleventy`, Eleventy devrait créer pour vous un dossier `_site` et y placer une copie de votre fichier `index.html`.
@@ -49,7 +49,7 @@ Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
 
 Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `.eleventy.js`:
 
-- Supprimer le dossier `./site`
+- Modifier le dossier de destination par défaut `./site`
 - Créer un dossier `./src` et y placer notre fichier `index.html`
 - Créer un fichier `.eleventy.js` dans la racine de notre projet
 
@@ -143,7 +143,7 @@ module.exports = function(eleventyConfig) {
 ./src/assets/scss/
 ```
 
-De cette façon, Eleventy va complètement ignorer le dossier `./src/assets/scss/` qui sera entièrement géré par l'outil de build, ainsi que son output.
+De cette façon, Eleventy va complètement ignorer le dossier `./src/assets/scss/` qui sera entièrement géré par l'outil de build, ainsi ce qui est produit en sortie.
 
 Personellement, j'utilise Gulp en combinaison avec Webpack dans la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
 
@@ -151,7 +151,7 @@ Personellement, j'utilise Gulp en combinaison avec Webpack dans la plupart de me
 
 Eleventy permet de travailler avec deux grandes sources de données:
 
-1. **des fichiers Markdown** (pour le contenu principal) et YAML front matter (pour le reste de la data structure) qui peuvent être facilement convertis en collections.
+1. **des fichiers Markdown** (pour le contenu principal) et YAML front matter (pour le reste de la structure de données) qui peuvent être facilement convertis en collections.
 2. **des fichiers JSON et/ou JS** qui peuvent soit être statiques soit dynamiques (provenant d'une API).
 
 Ces deux sources de données ne sont pas mutuellement exclusives et sont généralement utilisées simultanément dans tout projet. Voyons cela plus en détail.
@@ -162,7 +162,7 @@ Ces deux sources de données ne sont pas mutuellement exclusives et sont génér
 
 Les fichiers Markdown couplés à un YAML front matter permettent d'utiliser de simples fichiers textes comme source de données structurées. C'est un classique avec la plupart des SSG.
 
-La partie en Markdown représente le contenu principal de vos données et est généralement simplement convertie en HTML. Le YAML front matter permet de créer votre data structure à l'aide de différents types de données (strings, tableaux, objets, etc.).
+La partie en Markdown représente le contenu principal de vos données et est généralement simplement convertie en HTML. Le YAML front matter permet de créer votre structure de données à l'aide de différents types de données (chaînes de caractères, tableaux, objets, etc.).
 
 Si vous devez construire un blog, vos blogposts seront représentés par des fichiers Markdown avec un YAML front matter qui pourrait ressembler à ceci:
 
@@ -206,7 +206,7 @@ Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgiu
 
 #### Collection API
 
-Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou de plusieurs collections.
+Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou plusieurs collections.
 
 Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `eleventy.js`.
 
@@ -236,30 +236,30 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacrée au templating.
+Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacré au templating.
 
 Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est à dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
 
-Lorsqu'une collection est créée, les key suivantes sont automatiquement créées. Les keys créées dans votre front matter sont accessibles via les keys suivantes:
+Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées. Les clefs créées dans votre front matter sont accessibles via les clefs suivantes:
 
 - `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy)
 - `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.io/docs/data/#fileslug).
 - `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu
-- `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la key `permalink`
+- `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la clef `permalink`
 - `date`: la date utilisée pour le classement. Pour en savoir plus sur les [dates des éléments de contenus](https://www.11ty.io/docs/dates/), référez-vous à la documentation.
 - `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritée des layouts.
 - `templateContent`: le contenu de ce template une fois rendu par Eleventy. N'inclus pas les templates étendus.
 
 #### Classer et filtrer vos collections
 
-Lorsque vous créez une collection avec l'API d'Eleventy, les items de cette collection sont automatiquement classés en ordre ascendant en utilisant:
+Lorsque vous créez une collection avec l'API d'Eleventy, les éléments de cette collection sont automatiquement classés en ordre ascendant en utilisant:
 
-1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source ou, a defaut, la date de création de celui-ci.
+1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source ou, à defaut, la date de création de celui-ci.
 2. Si certains fichiers source ont une date identique, le chemin complet (y compris le nom de fichier) est pris en compte
 
 Si un classement par date correspond à ce que vous souhaitez, vous pouvez éventuellement inverser celui-ci en utilisant le filtre `reverse` de Nunjucks.
 
-Si vous souhaitez classer alphabétiquement les membres de votre équipe sur base de la key `surname`, le code suivant classerait ces membres de l'équipe par ordre ascendant.
+Si vous souhaitez classer alphabétiquement les membres de votre équipe sur base de la clef `surname`, le code suivant classerait ces membres de l'équipe par ordre ascendant :
 
 
 ```js
@@ -280,7 +280,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Si vous devez par contre filtrer une collection pour exclure certaines données, il vous faudra utiliser la méthode `filter` en JavaScript. Vous pouvez par exemple inclure seulement les blogposts ayant une key `draft` dont la valeur n'est pas `true` ou qui ont une date de publication inférieure à la date de génération du site.
+Si vous devez par contre filtrer une collection pour exclure certaines données, il vous faudra utiliser la méthode `filter` en JavaScript. Vous pouvez par exemple inclure seulement les blogposts ayant une clef `draft` dont la valeur n'est pas `true` ou qui ont une date de publication inférieure à la date de génération du site.
 
 ```js
 const now = new Date();
@@ -299,9 +299,9 @@ module.exports = function(eleventyConfig) {
 
 ### Data files (JS ou JSON)
 
-Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de data. Ceux-ci peuvent être statiques ou dynamiques.
+Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de données. Ceux-ci peuvent être statiques ou dynamiques.
 
-Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers data peut être modifié dans votre fichier de configuration `.eleventy.js`.
+Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `.eleventy.js`.
 
 ```js
 module.exports = function(eleventyConfig) {
@@ -319,9 +319,9 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-#### Fichiers data statiques
+#### Fichiers de données statiques
 
-Les fichiers de data statiques sont simplement des fichiers JSON ou JS contenant des paires key / value.
+Les fichiers de données statiques sont simplement des fichiers JSON ou JS contenant des paires clé / valeur.
 
 **./src/_data/site.js**
 ```js
@@ -337,17 +337,17 @@ module.exports = {
 };
 ```
 
-Les données sont accessibles dans vos templates à l'aide du nom de fichier utilisé comme key. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`.
+Les données sont accessibles dans vos templates à l'aide du nom de fichier utilisé comme clef. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`.
 
 #### Fichiers data dynamiques
 
-Etant donné que les fichiers de data sont rédigés en JavaScript, rien ne vous empèche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
+Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne vous empèche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
 
 A chaque fois que votre site est généré, Eleventy exécutera ce script et traitera le JSON retourné par l'API comme un fichier de données statique pour générer vos pages.
 
-### Permalinks et URLs
+### Permaliens et URLs
 
-Par défaut, Eleventy utilise votre structure de dossiers et vos fichiers et dans votre directory source pour générer des fichiers statiques dans votre dossier de sortie.
+Par défaut, Eleventy utilise votre structure de dossiers et vos fichiers et dans votre répertoire source pour générer des fichiers statiques dans votre dossier de sortie.
 
 - `./src/index.html` va générer `./dist/index.html` avec comme URL `/`
 - `./src/test.html` va générer `./dist/test/index.html` avec comme URL `/test/`
@@ -371,7 +371,7 @@ permalink: "/blog/{{ page.fileSlug }}/index.html"
 ---
 ```
 
-Si vous avez une collection pour présenter votre équipe mais que vous n'avez pas de page de détail, vous pouvez simplement utiliser la valeur `false` pour `permalink` et Eleventy ne générera alors pas de pages de détail. Dans la plupart des cas, vous n'aurez alors pas besoin de layout non plus.
+Si vous avez une collection pour présenter votre équipe mais que vous n'avez pas de page de détail, vous pouvez utiliser la valeur `false` pour `permalink` et Eleventy ne générera alors pas de pages de détail. Dans la plupart des cas, vous n'aurez alors pas besoin de layout non plus.
 
 ```text
 ---
@@ -384,9 +384,9 @@ Nous verrons plus loin que vous aurez alors besoin d'utiliser `templateContent` 
 
 #### Valeurs par défaut et fichiers de données liés aux dossiers
 
-Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un directory en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
+Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un répertoire en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
 
-Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blogposts/blogposts.json`, `.src/blogposts/blogposts.11data.json` ou `.src/blogposts/blogposts.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du directory ou des directories enfants.
+Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blogposts/blogposts.json`, `.src/blogposts/blogposts.11data.json` ou `.src/blogposts/blogposts.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
 
 **./src/blogposts/blogposts.json** ou **./src/blogposts/blogposts.11tydata.json**
 ```json
@@ -406,7 +406,7 @@ module.exports = {
 
 ## 4. Templating avec Eleventy et Nunjucks
 
-Eleventy vous permet de travailler avec différents langages de templating. Nunjucks de Mozilla est assez puissant et facile d'utilisation, c'est donc celui avec lequel je travaille d'habitude. La [documentation](https://mozilla.github.io/nunjucks/) étant assez bien faite, je ne vais pas ici rentrer dans le détail mais simplement réaliser les templates dont nous avons besoin pour notre projet de blog.
+Eleventy vous permet de travailler avec différents langages de templating. Nunjucks de Mozilla est assez puissant et facile d'utilisation, c'est donc celui avec lequel je travaille d'habitude. La [documentation](https://mozilla.github.io/nunjucks/) étant assez bien faite, je ne vais pas rentrer ici dans le détail mais simplement réaliser les templates dont nous avons besoin pour notre projet de blog.
 
 ### Principaux tags de Nunjucks
 
@@ -418,29 +418,29 @@ Nunjucks possède trois grands types de tags
 
 #### Tags de commentaires
 
-Nunjucks possède un tag de commentaire: `{# Ceci est un commentaire #}`. Ceux-ci ne sont pas affiché lorsque le template est rendu.
+Nunjucks possède un tag de commentaire: `{# Ceci est un commentaire #}`. Ceux-ci ne sont pas affichés lorsque le template est rendu.
 
 #### Tags d'affichage, variables et propriétés
 
-Ces tags vous permettent d'afficher des chaines de caractères, nombres, booléens, tableaux et objects dans vos templates. La plupart du temps, vous afficherez des variables créées par vous ou par Eleventy. Une notation pointée permet d'accéder aux propriétés de ces variables.
+Ces tags vous permettent d'afficher des chaines de caractères, nombres, booléens, tableaux et objets dans vos templates. La plupart du temps, vous afficherez des variables créées par vous ou par Eleventy. Une notation pointée permet d'accéder aux propriétés de ces variables.
 
 Exemples:
 
 - `{{ "Hello World" }}`: affiche la chaîne de caractères "Hello World"
-- `{{ data.title }}`: affiche la valeur de la key `title` dans l'objet `data`
+- `{{ data.title }}`: affiche la valeur de la clef `title` dans l'objet `data`
 - `{{ 8 + 2 }}`: affiche `10`
 
 #### Filtres
 
-Les filtres sont essentiellement destiné à manipuler des chaines de caractères, nombres, booléens, tableaux et objects tout en les affichants dans vos templates. Nunjucks possède de nombreux filtres par défaut. Voici quelques exemples.
+Les filtres sont essentiellement destiné à manipuler des chaînes de caractères, nombres, booléens, tableaux et objets tout en les affichants dans vos templates. Nunjucks possède de nombreux filtres par défaut. Voici quelques exemples.
 
-- `{{ "this should be uppercase" | upper }}` va avoir comme output `THIS SHOULD BE UPPERCASE`.
-- `{{ [1,2,3,4,5] | reverse }}` va avoir comme output `5,4,3,2,1` ce tag est particulièrement utile combiné avec des classements par date dans Eleventy.
-- `{{ collections.blogposts | length }}` va afficher le nombre d'items présents dans votre collection de blogposts.
+- `{{ "this should be uppercase" | upper }}` produira en sortie `THIS SHOULD BE UPPERCASE`.
+- `{{ [1,2,3,4,5] | reverse }}` produira en sortie `5,4,3,2,1` ce filtre est particulièrement utile combiné avec des classements par date dans Eleventy.
+- `{{ collections.blogposts | length }}` va afficher le nombre d'éléments présents dans votre collection de blogposts.
 
-##### Filtres custom dans Eleventy
+##### Filtres personnalisés dans Eleventy
 
-Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `.eleventy.js` ces filtres peuvent ensuite être utilisés dans le languge de te:plating que vous aurez choisi. Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement un dans Eleventy à l'aide de la librairie [`moment.js`](https://momentjs.com/).
+Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `.eleventy.js` ces filtres peuvent ensuite être utilisés dans le languge de templating que vous aurez choisi. Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement un dans Eleventy à l'aide de la librairie [`moment.js`](https://momentjs.com/).
 
 ```js
 // required packages
@@ -497,7 +497,7 @@ Nunjucks permet d'utiliser les structure de contrôle traditionelles telles que 
 
 ##### Boucle `for`
 
-Lorsque vous devrez afficher des données, qu'elles proviennent d'API ou de fichiers Markdown, vous devrez parcourir des tableaux ou des dictionnaires avec des boucles `for`. Voici par exemple comment afficher dans une liste les titres et intro de tous vos blogposts.
+Lorsque vous devrez afficher des données, qu'elles proviennent d'API ou de fichiers Markdown, vous devrez parcourir des tableaux ou des dictionnaires avec des boucles `for`. Voici par exemple comment afficher dans une liste les titres et introduction de tous vos blogposts.
 
 ```njk
 {% set blogposts = collections.blogposts %}
@@ -533,7 +533,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Lorsqu'un template parent est étendu par un template enfants, les variables définies dans le template enfant sont accessible dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquel des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilités de créer des [shortcodes](https://www.11ty.io/docs/shortcodes/).
+Lorsqu'un template parent est étendu par un template enfant, les variables définies dans le template enfant sont accessibles dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquels des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilités de créer des [shortcodes](https://www.11ty.io/docs/shortcodes/).
 
 Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 
@@ -675,7 +675,7 @@ permalink: /about/index.html
 {% endblock %}
 ```
 
-Pour la page d'archive de notre blog, nous allons utiliser la fonction de pagination d'Eleventy. Celle fonctionne en spécifiant quelles sont les données à paginer, combien d'items doivent être affichés par page et quel alias doit être utilisés pour les données une fois paginées.
+Pour la page d'archive de notre blog, nous allons utiliser la fonction de pagination d'Eleventy. Celle fonctionne en spécifiant quelles sont les données à paginer, combien d'éléments doivent être affichés par page et quel alias doit être utilisé pour les données une fois paginées.
 
 **./src/pages/blog.njk**
 ```njk

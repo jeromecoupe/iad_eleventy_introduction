@@ -1,49 +1,53 @@
-# Eleventy (11ty) par Zach Leatherman
+# Eleventy (11ty) by Zach Leatherman
 
 ## 1. Introduction
 
-[Eleventy](https://www.11ty.io) est un générateur de site statique (Static Site Generator ou SSG en anglais) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Cet outil vous permet de développer des sites basés sur des templates et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
+[Eleventy](https://www.11ty.io) is a Static Site Genertor created and maintained by [Zach Leatherman](https://www.zachleat.com/). Eleventy allows you to develop websites based on templates and data or content files (YAML / Markdown / HTML / JSON / JS) in a source directory. Based on those source files, Eleventy will generate a fully functional static site in a destination folder. You will then be able to deploy that site on any web server capable of serving static files.
 
-[Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/) écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
+The [stated goal of Eleventy]((https://www.11ty.io/docs/)) is to be an alternative to [Jekyll](https://jekyllrb.com/) written in Node rather than in Ruby. Just as Jekyll it is a very approachable and simple to use SSG once the basic principles are well understood.
 
-Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tout d'abord, Eleventy est écrit en Node et vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser une large gamme de langages de templating. Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de [Mozilla](https://www.mozilla.org).
+Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Being written in Node, Eleventy allows you to use the NPM ecosystem to build extends its functionalities. You can also pick your favourite in a long list of templating languages. We will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all the code samples in this course.
 
-## 2. Installation et configuration
+## 2. Installation and configuration
 
 ### Installation
 
-Commençons d'abord par créer un dossier pour notre projet:
+Let's start by creating a folder for our new project:
 
 ```text
 mkdir eleventy-portfolio
 cd eleventy-portfolio
 ```
 
-Vous devrez installer [Node](https://nodejs.org) sur votre machine si ce n'est pas déjà fait. L'installation se fait à l'aide d'un module NPM. Pour installer Eleventy, il faut commencer par créer dans notre projet un fichier `package.json` qui reprendra toutes nos dépendences Node.
+You will need [Node](https://nodejs.org) installed on your machine. You can then install Eleventy as an NPM module. The best way to proceed is to create a `package.json` that will manage all our Node dependencies.
 
 ```text
 npm init -y
 ```
 
-Dans un premier temps, vous pouvez simplement accepter l'ensemble des réponses aux questions posées. Vous pourrez toujours y revenir par après en éditant votre fichier `package.json`. Voici la [documentation complète](https://docs.npmjs.com/files/package.json) pour vous aider à comprendre quelles sont les paramètres et options disponibles.
+That will skip a bunch of questions and create a standard file. You can come back to it and edit your `package.json` as you see fit. Here is the [official documentation](https://docs.npmjs.com/files/package.json) to help you find out about the available parameters and options.
 
-Nous pouvons ensuite installer Eleventy comme dépendance locale pour notre projet:
+We can then install Eleventy as a local dependency for our project:
 
 ```text
 npm install --save-dev @11ty/eleventy
 ```
 
-Eleventy va simplement s'installer dans un dossier `node_modules`. Pour pouvoir utiliser Eleventy, nous allons devoir le configurer et créer au moins un fichier. Pour le moment, nous allons simplement créer un fichier `index.html` statique qu'Eleventy devrait copier tel quel dans le dossier de destination qui est spécifié comme étant `_site` par défaut.
+At this point, Eleventy will simply create a `node_modules` folder and install itself, but nothing more. To see it in action, we will have to create at lest one file. Let's simply create a basic `index.html` file and that Eleventy will copy in the default `_site` destination folder.
 
-Une fois ce fichier créé, nous pouvons tester les commandes principales d'Eleventy:
+Once we have created that file, we can learn the basic Eleventy command
 
-- `npx eleventy`: pour faire tourner Eleventy
-- `npx eleventy --serve`: pour faire tourner Browsersync afin d'avoir un serveur web local qui va recharger le site dans votre navigateur dès que le site change
-- `npx eleventy --help`: pour avoir la liste des commandes existantes
+- `npx eleventy`: to run Eleventy
+- `npx eleventy --serve`: to run BrowserSync and have a local web server that will reload the site in your browser when the site changes
+- `npx eleventy --help`: to explore the list of available commands and flags
 
-Vous connaissez maintenant les commandes de base, nécessaires pour commencer à travailler. Si vous tapez `npx eleventy`, Eleventy devrait créer pour vous un dossier `_site` et y placer une copie de votre fichier `index.html`.
+If we now type `npx eleventy` in our terminal, Eleventy will create a `_site` folder and copy our `index.html` file in it. Pretty impressive, right ?
 
-Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
+Let's now configure Eleventy to better suit our needs.
+
+@TODO
+
+--------------------------------------------
 
 ### Configuration
 

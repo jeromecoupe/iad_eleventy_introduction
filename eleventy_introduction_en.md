@@ -6,7 +6,7 @@
 
 The [stated goal of Eleventy]((https://www.11ty.io/docs/)) is to be an alternative to [Jekyll](https://jekyllrb.com/) written in Node rather than in Ruby. Just as Jekyll it is a very approachable and simple to use SSG once the basic principles are well understood.
 
-Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Being written in Node, Eleventy allows you to use the NPM ecosystem to build extends its functionalities. You can also pick your favourite in a long list of templating languages. We will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all the code samples in this course.
+Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, Eleventy allows you to use the NPM ecosystem to build extends its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). We will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all the code samples in this course.
 
 ## 2. Installation and configuration
 

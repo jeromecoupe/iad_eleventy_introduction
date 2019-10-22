@@ -772,7 +772,7 @@ permalink: blog/{{ blogpost.slug }}/index.html
 {% endblock %}
 ```
 
-### Exercise for the remainder of the workshop
+### Workshop exercise
 
 Start with the provided static templates to create a fully functionnal blog together.
 

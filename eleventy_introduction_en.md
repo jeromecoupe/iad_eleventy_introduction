@@ -119,6 +119,7 @@ When you start using build tools to create an assets pipeline, you will likely h
 
 If, for example, you are using NPM scripts to build your CSS from Sass files or you use Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
 
+**.eleventy.js**
 ```js
 module.exports = function(eleventyConfig) {
   // copy files
@@ -147,27 +148,28 @@ Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/j
 
 Personnally, I use Gulp combined with Webpack for most of my projects. Eleventy can very easily be integrated to this kind of workflow.
 
-## 3. Définir et structurer vos données
+## 3. Define and structure your data
 
-Eleventy permet de travailler avec deux grandes sources de données:
+Eleventy allows you to work with two data sources:
 
-1. **des fichiers Markdown** (pour le contenu principal) et YAML front matter (pour le reste de la structure de données) qui peuvent être facilement convertis en collections.
-2. **des fichiers JSON et/ou JS** qui peuvent soit être statiques soit dynamiques (provenant d'une API).
+1. **Markdown files** (for the main content) and YAML front matter (for the rest of the data structure) that can easily be turned into collections (more on that later).
+2. **JSON and/or JS data files** that can either be static or dynamic (fetched from an API).
 
-Ces deux sources de données ne sont pas mutuellement exclusives et sont généralement utilisées simultanément dans tout projet. Voyons cela plus en détail.
+Thse two types of data sources are not mutually exlcusive and are, in fact, used simultaneously in most projects. Let's dive in.
 
 ### Collections
 
-#### Markdown et YAML front matter
+Collections in Eleventy allow you to group content items in interesting ways and to use them in your templates.
 
-Les fichiers Markdown couplés à un YAML front matter permettent d'utiliser de simples fichiers textes comme source de données structurées. C'est un classique avec la plupart des SSG.
+#### Markdown and YAML front matter
 
-La partie en Markdown représente le contenu principal de vos données et est généralement simplement convertie en HTML. Le YAML front matter permet de créer votre structure de données à l'aide de différents types de données (chaînes de caractères, tableaux, objets, etc.).
+Markdown files coupled with a YAML front matter allow you tyo use simple etxt files as structured data sources. It's a staple feature of most SSG out there.
 
-Si vous devez construire un blog, vos blogposts seront représentés par des fichiers Markdown avec un YAML front matter qui pourrait ressembler à ceci:
+The Mardown part of the file generally represents the main content of your data and is generally converted to HTML. The YAML front matter allow you to create a data structure with diffrent types of data (strings, arrays, objects, etc.).
+
+If you want to build a blog, your blogposts are going to be represented by Markdown files with a YAML front matter that could look something like the following:
 
 **./src/blog/2019-07-22-markdown-yaml-front-matter.md**
-
 ```md
 ---
 title: "This is the title"
@@ -187,10 +189,9 @@ categories:
 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibus reiciendis dignissimos accusantium illo, voluptates consequuntur fugit amet quo sed nisi facere animi incidunt assumenda exercitationem, nam omnis perspiciatis praesentium.
 ```
 
-Chaque membre de l'équipe éditoriale pourrait être représenté par un fichier ayant la structure suivante:
+Let's say you also need to model a data structire for a team. Each team member could be represented by a file like this one:
 
 **./src/projects/jerome-coupe.md**
-
 ```md
 ---
 name: "Jérôme"
@@ -201,18 +202,18 @@ github: "https://github.com/jeromecoupe"
 website: "https://www.webstoemp.com"
 ---
 
-Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not coding, he might have been seen drinking a few craft beers with friends.
+Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not coding, he might have been seen downtown, drinking a few craft beers with friends.
 ```
 
 #### Collection API
 
-Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou plusieurs collections.
+For Eleventy to group those files in an array that will allow you to manipulate that array in your templates, you just have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
 
-Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `eleventy.js`.
+To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `.eleventy.js` file
 
-Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les éléments de contenus qui correspondent au même glob pattern.
+This API offers you [different methods to declare your collections](https://www.11ty.io/docs/collections/#collection-api-methods) that each have their use. My favourite and most used one by far is `getFilteredByGlob(glob)` that allows you create a collection from all files matching a defined glob pattern.
 
-Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `eleventy.js`
+If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection couldn't be simpler. You just have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
 
 ```js
 module.exports = function(eleventyConfig) {
@@ -226,6 +227,9 @@ module.exports = function(eleventyConfig) {
     return collection.getFilteredByGlob("./src/team/*.md");
   });
 
+  // copy files
+  eleventyConfig.addPassthroughCopy("./src/assets/");
+
   // override default config
   return {
     dir: {
@@ -236,31 +240,30 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacré au templating.
+You can now access your collections using `collections.blogposts` and `collections.team` in your templates. We will come back to them when we get to templating.
 
-Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est à dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
+It is also important to know that, by default, Eleventy creates a collection that contains all your content items. This special collection can be accessed in your templates by using `collections.all`.
 
-Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées. Les clefs créées dans votre front matter sont accessibles via les clefs suivantes:
+When a collection is created, the following keys are automatically created:
 
-- `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy)
-- `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.io/docs/data/#fileslug).
-- `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu
-- `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la clef `permalink`
-- `date`: la date utilisée pour le classement. Pour en savoir plus sur les [dates des éléments de contenus](https://www.11ty.io/docs/dates/), référez-vous à la documentation.
-- `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritée des layouts.
-- `templateContent`: le contenu de ce template une fois rendu par Eleventy. N'inclus pas les templates étendus.
+- `inputPath`: the full path to the source input file (including the path to the input directory)
+- `fileSlug`: Mapped from the input file name, useful for permalinks. Read more about [`fileslug`](https://www.11ty.io/docs/data/#fileslug).
+- `outputPath`: the full path to the output file to be written for this content
+- `url`: url used to link to this piece of content. In general, this is based on the `permalink` key defined for your content items.
+- `date`: the resolved date used for sorting. Read more about [Content Dates](https://www.11ty.io/docs/dates/) in the documentation.
+- `data`: all data for this piece of content. Contains the keys/values defined in the YAML front-matter and the data inherited from layouts.
+- `templateContent`: the rendered content of this template. Does not include layout wrappers.
 
-#### Classer et filtrer vos collections
+#### Sort and filter your collections
 
-Lorsque vous créez une collection avec l'API d'Eleventy, les éléments de cette collection sont automatiquement classés en ordre ascendant en utilisant:
+When you create a collection in Eleventy, the items in it are automatically sorted in ascending order using:
 
-1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source ou, à defaut, la date de création de celui-ci.
-2. Si certains fichiers source ont une date identique, le chemin complet (y compris le nom de fichier) est pris en compte
+1. The date specified in the filename or in the YAML front matter of the source file or will use the creating date on the filesystem as a fallback.
+2. If some files have an identicaly date, the full path of the file (including the filename) will be taken into account as well.
 
-Si un classement par date correspond à ce que vous souhaitez, vous pouvez éventuellement inverser celui-ci en utilisant le filtre `reverse` de Nunjucks.
+If what you need is to sort your collection items by date, you are covered. Just use the `reverse` filter in Nunjucks if you need it.
 
-Si vous souhaitez classer alphabétiquement les membres de votre équipe sur base de la clef `surname`, le code suivant classerait ces membres de l'équipe par ordre ascendant :
-
+By contrast, if you need to sort your team members alphabetically using the value of their `surname` key, you will need to use the JavaScript `sort` method.
 
 ```js
 module.exports = function(eleventyConfig) {
@@ -280,7 +283,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Si vous devez par contre filtrer une collection pour exclure certaines données, il vous faudra utiliser la méthode `filter` en JavaScript. Vous pouvez par exemple inclure seulement les blogposts ayant une clef `draft` dont la valeur n'est pas `true` ou qui ont une date de publication inférieure à la date de génération du site.
+If you need to filter a collection to exclude some data, you can use the JavaScript `filter` method. You can for example only include only the blogposts that do not have a `draft` key set to `true` in their front matter and that have a publication date smaller than the date at which the site is generated.
 
 ```js
 const now = new Date();
@@ -291,17 +294,17 @@ module.exports = function(eleventyConfig) {
 
   // blogposts collection
   eleventyConfig.addCollection("blogposts", function(collection) {
-  return collection.getFilteredByGlob("./src/blogposts/*.md").filter((item) => {
+  return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
     return item.data.draft !== true && item.date <= now;
   });
 };
 ```
 
-### Fichiers de données (JS ou JSON)
+### Data files (JS ou JSON)
 
-Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de données (data files). Ceux-ci peuvent être statiques ou dynamiques.
+Aside from collections, the other data source you can use with Eleventy are data files. Those can be static or dynamic (retrieved from an API).
 
-Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `.eleventy.js`.
+By default, these files have to be stored in the `./src/_data/` directory. This can be modified uing the `.eleventy.js` configuration file.
 
 ```js
 module.exports = function(eleventyConfig) {
@@ -319,9 +322,9 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-#### Fichiers de données statiques
+#### Static data files
 
-Les fichiers de données statiques sont simplement des fichiers JSON ou JS contenant des paires clé / valeur.
+Static data files are simply JSON or JS files containing key/value pairs.
 
 **./src/_data/site.js**
 ```js
@@ -337,25 +340,25 @@ module.exports = {
 };
 ```
 
-Les données sont accessibles dans vos templates à l'aide du nom de fichier utilisé comme clef. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`.
+Those values can be accessed in your templates by using the filename as a key. For exemple, data contained in a `./src/_data/site.js` file will be accessible in your templates using the `site` variable.
 
-#### Fichiers data dynamiques
+#### Dynamic data files
 
-Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne vous empèche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
+Because data files can be JavaSCript files, nothing is preventing you from [connecting to an API](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) in one of those files by using [`node-fetch`](https://www.npmjs.com/package/node-fetch) or [`axios`](https://www.npmjs.com/package/axios) for example.
 
-A chaque fois que votre site est généré, Eleventy exécutera ce script et traitera le JSON retourné par l'API comme un fichier de données statique pour générer vos pages.
+Each time you generate your site, Eleventy will execute that script and treat the JSOn file returned by the API like a static one to generate your pages or views.
 
-### Permaliens et URLs
+### Permalinks and URLs
 
-Par défaut, Eleventy utilise votre structure de dossiers et vos fichiers et dans votre répertoire source pour générer des fichiers statiques dans votre dossier de sortie.
+By default, Eleventy will use the folders and files structure in your source directory to generate static files in your output folder.
 
-- `./src/index.html` va générer `./dist/index.html` avec comme URL `/`
-- `./src/test.html` va générer `./dist/test/index.html` avec comme URL `/test/`
-- `./src/subdir/index.html` va générer `./dist/subdir/index.html` avec comme URL `/subdir/`
+- `./src/index.html` will generate `./dist/index.html` with `/` as the URL
+- `./src/test.html` will generate `./dist/test/index.html` with `/test/` as the URL
+- `./src/subdir/index.html` will generate `./dist/subdir/index.html` with `/subdir/` as the URL
 
-Cela peut être surdéterminé par l'utilisation d'une variable `permalink` statique ou dynamique dans vos fichiers de contenus ou dans vos templates.
+This default behaviour can be changed by using a static or dynamic `permalink` variable in your content files or in your templates.
 
-Pour créer un blog, vous aller avoir besoin d'une page d'index `/blog/index.html`. Votre template Nunjucks `./src/pages/blog.njk` pourra donc avoir cette URL comme valeur de la key `permalink` dans son YAML front matter.
+For example, to create a blog, you will need an index page at the following URL `/blog/index.html`. Your Nunjucks template `./src/pages/blog.njk` should have that as the value of the permalink key in its YAML front matter.
 
 ```text
 ---
@@ -363,7 +366,7 @@ permalink: "/blog/index.html"
 ---
 ```
 
-Vous pouvez également utiliser des variables pour créer vos valeurs de `permalink`.
+You can also use variables to create dynamic `permalink` values. This could be in the YAML front matter of all your Markdown blogposts files.
 
 ```text
 ---
@@ -371,7 +374,7 @@ permalink: "/blog/{{ page.fileSlug }}/index.html"
 ---
 ```
 
-Si vous avez une collection pour présenter votre équipe mais que vous n'avez pas de page de détail, vous pouvez utiliser la valeur `false` pour `permalink` et Eleventy ne générera alors pas de pages de détail. Dans la plupart des cas, vous n'aurez alors pas besoin de layout non plus.
+If you have a collection to group all your team memebers but you do not need a detail page for each member, you can use `false` as the value of the `permalink` key. Eleventy will not generate detail pages. In most of those cases, you won't need a dedicated layour either.
 
 ```text
 ---
@@ -380,15 +383,15 @@ layout: false
 ---
 ```
 
-Nous verrons plus loin que vous aurez alors besoin d'utiliser `templateContent` pour afficher le contenu de vos fichiers Markdown.
+We will see later that you will then need to use the `templateContent` key to display the content of your Markdown files.
 
-#### Valeurs par défaut et fichiers de données liés aux dossiers
+#### Default values and directory data files
 
-Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un répertoire en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
+Instead of having to specify the same YAML front matter key / value apir for a bunch of files, Eleventy allows you to specify the same key/value pair for all the files in a directory by using JS or JSON [directory data files](https://www.11ty.io/docs/data-template-dir/).
 
-Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blogposts/blogposts.json`, `.src/blogposts/blogposts.11data.json` ou `.src/blogposts/blogposts.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
+If you want to specify the same key/value pair for `permalink` and `layout` for all of your blogposts, you can simply add an `./src/blog/blog.json`, `./src/blog/blog.11data.json` or `./src/blog/blog.11data.js` directory data file in the `./src/blog` directory and specify them there. Eleventy will apply those values to all the files in that directory or in subdiretories.
 
-**./src/blogposts/blogposts.json** ou **./src/blogposts/blogposts.11tydata.json**
+**./src/blog/blog.json** ou **./src/blog/blog.11tydata.json**
 ```json
 {
   "layout": "layouts/blogpost.njk",
@@ -396,13 +399,17 @@ Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` ide
 }
 ```
 
-**./src/blogposts/blogposts.11tydata.js**
+**./src/blog/blog.11tydata.js**
 ```js
 module.exports = {
   layout: "layouts/blogpost.njk",
   permalink: "blog/{{ page.fileSlug }}/index.html"
 };
 ```
+
+-----------------------------
+@TODO
+-----------------------------
 
 ## 4. Templating avec Eleventy et Nunjucks
 

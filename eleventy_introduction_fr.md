@@ -119,6 +119,7 @@ Lorsque vous commencez à utiliser des outils de build pour vos assets, vous dev
 
 A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass, il suffit de faire les modifications suivantes:
 
+**.eleventy.js**
 ```js
 module.exports = function(eleventyConfig) {
   // copy files
@@ -158,6 +159,8 @@ Ces deux sources de données ne sont pas mutuellement exclusives et sont génér
 
 ### Collections
 
+Les collections dans Eleventy vous permettent de grouper des contenus de différentes façons et de les utiliser dans vos templates.
+
 #### Markdown et YAML front matter
 
 Les fichiers Markdown couplés à un YAML front matter permettent d'utiliser de simples fichiers textes comme source de données structurées. C'est un classique avec la plupart des SSG.
@@ -167,7 +170,6 @@ La partie en Markdown représente le contenu principal de vos données et est g�
 Si vous devez construire un blog, vos blogposts seront représentés par des fichiers Markdown avec un YAML front matter qui pourrait ressembler à ceci:
 
 **./src/blog/2019-07-22-markdown-yaml-front-matter.md**
-
 ```md
 ---
 title: "This is the title"
@@ -190,7 +192,6 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibu
 Chaque membre de l'équipe éditoriale pourrait être représenté par un fichier ayant la structure suivante:
 
 **./src/projects/jerome-coupe.md**
-
 ```md
 ---
 name: "Jérôme"
@@ -201,19 +202,20 @@ github: "https://github.com/jeromecoupe"
 website: "https://www.webstoemp.com"
 ---
 
-Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not coding, he might have been seen drinking a few craft beers with friends.
+Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not coding, he might have been seen downtown, drinking a few craft beers with friends.
 ```
 
 #### Collection API
 
 Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou plusieurs collections.
 
-Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `eleventy.js`.
+Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `.eleventy.js`.
 
-Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les éléments de contenus qui correspondent au même glob pattern.
+Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichuer correspondent à un même glob pattern.
 
-Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `eleventy.js`
+Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `.eleventy.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
 
+**.eleventy.js**
 ```js
 module.exports = function(eleventyConfig) {
   // blogposts collection
@@ -225,6 +227,10 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addCollection("team", function(collection) {
     return collection.getFilteredByGlob("./src/team/*.md");
   });
+
+
+  // copy files
+  eleventyConfig.addPassthroughCopy("./src/assets/");
 
   // override default config
   return {
@@ -240,7 +246,7 @@ Vous pouvez maintenant accéder à vos collections en utilisant `collections.blo
 
 Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est à dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
 
-Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées. Les clefs créées dans votre front matter sont accessibles via les clefs suivantes:
+Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées:
 
 - `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy)
 - `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.io/docs/data/#fileslug).
@@ -291,7 +297,7 @@ module.exports = function(eleventyConfig) {
 
   // blogposts collection
   eleventyConfig.addCollection("blogposts", function(collection) {
-  return collection.getFilteredByGlob("./src/blogposts/*.md").filter((item) => {
+  return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
     return item.data.draft !== true && item.date <= now;
   });
 };
@@ -363,7 +369,7 @@ permalink: "/blog/index.html"
 ---
 ```
 
-Vous pouvez également utiliser des variables pour créer vos valeurs de `permalink`.
+Vous pouvez également utiliser des variables pour créer vos valeurs de `permalink`. Les fichiers Markdown pour vos blogposts pourraient tous avoir la valeur de `permalink` suivante.
 
 ```text
 ---
@@ -386,9 +392,9 @@ Nous verrons plus loin que vous aurez alors besoin d'utiliser `templateContent` 
 
 Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un répertoire en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
 
-Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blogposts/blogposts.json`, `.src/blogposts/blogposts.11data.json` ou `.src/blogposts/blogposts.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
+Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blog/blog.json`, `.src/blog/blog.11data.json` ou `.src/blog/blog.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
 
-**./src/blogposts/blogposts.json** ou **./src/blogposts/blogposts.11tydata.json**
+**./src/blog/blog.json** ou **./src/blog/blog.11tydata.json**
 ```json
 {
   "layout": "layouts/blogpost.njk",
@@ -396,7 +402,7 @@ Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` ide
 }
 ```
 
-**./src/blogposts/blogposts.11tydata.js**
+**./src/blog/blog.11tydata.js**
 ```js
 module.exports = {
   layout: "layouts/blogpost.njk",

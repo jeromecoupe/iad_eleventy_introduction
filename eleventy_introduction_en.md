@@ -45,19 +45,15 @@ If we now type `npx eleventy` in our terminal, Eleventy will create a `_site` fo
 
 Let's now configure Eleventy to better suit our needs.
 
-@TODO
-
---------------------------------------------
-
 ### Configuration
 
-Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `.eleventy.js`:
+We will make a simple project architecture and configure Eleventy by creating a `.eleventy.js` configuration file at the root of our project.
 
-- Modifier le dossier de destination par défaut `./site`
-- Créer un dossier `./src` et y placer notre fichier `index.html`
-- Créer un fichier `.eleventy.js` dans la racine de notre projet
+- Delete the `./site` folder created by Eleventy
+- Create an `./src` folder and move `index.html` to it
+- Create an `.eleventy.js` file at the root of our project
 
-Commençons par spécifier les dossiers source et de destination pour Eleventy:
+Let's start by specify source and destination folders for Eleventy:
 
 **.eleventy.js**
 ```js
@@ -72,18 +68,18 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Si nous exécutons la commande `npx eleventy` dans notre terminal, Eleventy générera un dossier `./dist` pour y copier notre fichier `index.html`.
+When we now run the `npx eleventy` command in our terminal while being at the root of our project, Eleventy will generate a `./dist` folder and will copy our trusty `index.html` file to it.
 
-### Copier quelques fichiers tels quels
+### Tell Eleventy to copy some folders and files
 
-Nous pouvons également utiliser ce fichier de configuration pour demander à Eleventy de copier n'importe quel fichier ou dossier depuis le dossier source jusqu'au dossier de destination via [`addPassthroughCopy`](https://www.11ty.io/docs/copy/). De bons candidats sont les assets statiques de notre projet comme les images et les fichiers de polices.
+We can also use this configuration file to tell Eleventy to copy any file or folder from the source directory to the destination directory. In order to instruct Eleventy to do so, we are going to use [`addPassthroughCopy`](https://www.11ty.io/docs/copy/). Good candidates to copy are static assets like images and font files.
 
-- créer un dossier `./src/assets/img/` et y placer un fichier image
-- créer un dossier `./src/assets/fonts/` et y placer quelques fichiers de polices
-- créer un dossier `./src/assets/js/` et y placer un fichier JavaScript
-- créer un dossier `./src/assets/css/` et y placer un fichier CSS
+- create a `./src/assets/img/` directory and drop a few optimised images in there
+- create a `./src/assets/fonts/` directory and drop a few font files in there
+- create a `./src/assets/js/` directory and drop a JavaScript file in there
+- create a `./src/assets/css/` directory and drop a CSS files in there
 
-Modifier le fichier `.eleventy.js` comme suit:
+Let's modify our `.eleventy.js` file as follows:
 
 **.eleventy.js**
 ```js
@@ -101,32 +97,31 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Eleventy va maintenant copier ce dossier ainsi que tout ce qu'il contient.
+Eleventy will now copy the `./src/assets/` directory and everything it contains to the output directory while preserving the directories structure.
 
-### Ignorer certains dossiers et fichiers
+### Ignore directories and files
 
-Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre éventuel fichier `.gitignore`.
+By default, Eleventy will ignore the `node_modules` directory as well as the folder, files and globs specified in your `.gitignore` file.
 
-Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour dire à Eleventy de les ignorer dans notre dossier source.
+We can also create a `.emeventyignore` folder at the root of our project and spécify a file, directory or glob pattner per line to explicitly tell Eleventy to ignore all matching files and directories. I have painfully learned that you always want to be as explict as possible, not ony in your code actually. Let's do this.
 
 **.eleventyignore**
 ```txt
-./node_modules/
-./dist/
+node_modules/
+dist/
 ```
 
-### Assets pipeline et outils de build
+### Assets pipeline and build tools
 
-Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
+Eleventy doesn't have an asset pipeline or a build tool by default. I almost always integrate it with build tools, be it with NPM scripts, Gulp, Webpack or any other alternative.
 
-Lorsque vous commencez à utiliser des outils de build pour vos assets, vous devrez modifier votre configuration de `addPassthroughCopy` et probablement ignorer les dossiers d'assets qui ne dépendent plus d'Eleventy puisque ce sont alors vos outils et scripts de build qui vont les générer dans votre dossier `dist`.
+When you start using build tools to create an assets pipeline, you will likely have to modify your `addPassthroughCopy` and ignore assets directories that will not need to be handled by Eleventy because your build tools and scripts will take care of them and generate what you need in your `./dist` directory.
 
-A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass, il suffit de faire les modifications suivantes:
+If, for example, you are using NPM scripts to build your CSS from Sass files or you use Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
 
 ```js
 module.exports = function(eleventyConfig) {
   // copy files
-  eleventyConfig.addPassthroughCopy("./src/assets/js/");
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
 
@@ -142,14 +137,15 @@ module.exports = function(eleventyConfig) {
 
 **.eleventyignore**
 ```txt
-./node_modules/
-./dist/
-./src/assets/scss/
+node_modules/
+dist/
+src/assets/scss/
+src/assets/js/
 ```
 
-De cette façon, Eleventy va complètement ignorer le dossier `./src/assets/scss/` qui sera entièrement géré par l'outil de build, ainsi ce qui est produit en sortie.
+Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories. Your build tools and scripts will generate the required outputs in your `./dist` directory.
 
-Personellement, j'utilise Gulp en combinaison avec Webpack dans la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
+Personnally, I use Gulp combined with Webpack for most of my projects. Eleventy can very easily be integrated to this kind of workflow.
 
 ## 3. Définir et structurer vos données
 

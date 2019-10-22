@@ -49,7 +49,7 @@ Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
 
 Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `.eleventy.js`:
 
-- Modifier le dossier de destination par défaut `./site`
+- Supprimer le dossier de destination `./site` créé par Eleventy
 - Créer un dossier `./src` et y placer notre fichier `index.html`
 - Créer un fichier `.eleventy.js` dans la racine de notre projet
 
@@ -74,7 +74,7 @@ Si nous exécutons la commande `npx eleventy` dans notre terminal, Eleventy gén
 
 Nous pouvons également utiliser ce fichier de configuration pour demander à Eleventy de copier n'importe quel fichier ou dossier depuis le dossier source jusqu'au dossier de destination via [`addPassthroughCopy`](https://www.11ty.io/docs/copy/). De bons candidats sont les assets statiques de notre projet comme les images et les fichiers de polices.
 
-- créer un dossier `./src/assets/img/` et y placer un fichier image
+- créer un dossier `./src/assets/img/` et y placer quelques fichiers images optimisés
 - créer un dossier `./src/assets/fonts/` et y placer quelques fichiers de polices
 - créer un dossier `./src/assets/js/` et y placer un fichier JavaScript
 - créer un dossier `./src/assets/css/` et y placer un fichier CSS
@@ -103,12 +103,12 @@ Eleventy va maintenant copier ce dossier ainsi que tout ce qu'il contient.
 
 Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre éventuel fichier `.gitignore`.
 
-Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour dire à Eleventy de les ignorer dans notre dossier source.
+Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possoble, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
 
 **.eleventyignore**
 ```txt
-./node_modules/
-./dist/
+node_modules/
+dist/
 ```
 
 ### Assets pipeline et outils de build

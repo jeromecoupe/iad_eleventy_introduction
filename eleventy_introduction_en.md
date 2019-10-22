@@ -407,47 +407,46 @@ module.exports = {
 };
 ```
 
------------------------------
-@TODO
------------------------------
+## 4. Templating with Eleventy and Nunjucks
 
-## 4. Templating avec Eleventy et Nunjucks
+Eleventy allows you to work with several templating languages. Nujucks from Mozilla is powerful and easy to use, so that's generally my default choice. The [documentation](https://mozilla.github.io/nunjucks/) is quite well done so we will not cover everything. We will learn enough to create the templates we need for our small blog project, and you can expand on your own later on.
 
-Eleventy vous permet de travailler avec différents langages de templating. Nunjucks de Mozilla est assez puissant et facile d'utilisation, c'est donc celui avec lequel je travaille d'habitude. La [documentation](https://mozilla.github.io/nunjucks/) étant assez bien faite, je ne vais pas rentrer ici dans le détail mais simplement réaliser les templates dont nous avons besoin pour notre projet de blog.
+### Main Nunjucks tags
 
-### Principaux tags de Nunjucks
+Nunjucks has three main types of tags
 
-Nunjucks possède trois grands types de tags
+- comments: `{# this is a comment #}`
+- display: `{{ variable }}`
+- logic: `{% logic %}`
 
-- tags de commentaires: `{# this is a comment #}`
-- tags d'affichage: `{{ variable }}`
-- tags de logique: `{% logique %}`
+#### Comment tags
 
-#### Tags de commentaires
+This one is pretty easy: `{# This is a comment #}`. Comments never appear in the rendered code.
 
-Nunjucks possède un tag de commentaire: `{# Ceci est un commentaire #}`. Ceux-ci ne sont pas affichés lorsque le template est rendu.
+#### Display tags: variables and
 
-#### Tags d'affichage, variables et propriétés
-
-Ces tags vous permettent d'afficher des chaines de caractères, nombres, booléens, tableaux et objets dans vos templates. La plupart du temps, vous afficherez des variables créées par vous ou par Eleventy. Une notation pointée permet d'accéder aux propriétés de ces variables.
+This tags allow you to display variables like strings, numbers, booleans, arrays and objects in your templates. Most of the time, you will display variables created by you or by Eleventy when it runs. You can access properties with a dot syntax, just like in JavaScript. Those tags also allow you to perform simple maths operations or string concatenation.
 
 Exemples:
 
 - `{{ "Hello World" }}`: affiche la chaîne de caractères "Hello World"
-- `{{ data.title }}`: affiche la valeur de la clef `title` dans l'objet `data`
+- `{{ site.title }}`: affiche la valeur de la clef `title` de l'objet `site`
+- `{{ site.title ~ " - is an awesome site" }}` will concatenate the value of the key `title` of the site object with the string next to it
 - `{{ 8 + 2 }}`: affiche `10`
 
-#### Filtres
+#### Filters
 
-Les filtres sont essentiellement destiné à manipuler des chaînes de caractères, nombres, booléens, tableaux et objets tout en les affichants dans vos templates. Nunjucks possède de nombreux filtres par défaut. Voici quelques exemples.
+Filters are essentially devoted to manipulate strings, numbers, booleans, arrays and objects while displaying them in your templates. Nunjucks makes a bunch of [built in filters](https://mozilla.github.io/nunjucks/templating.html#builtin-filters) available. Here are some examples.
 
-- `{{ "this should be uppercase" | upper }}` produira en sortie `THIS SHOULD BE UPPERCASE`.
-- `{{ [1,2,3,4,5] | reverse }}` produira en sortie `5,4,3,2,1` ce filtre est particulièrement utile combiné avec des classements par date dans Eleventy.
-- `{{ collections.blogposts | length }}` va afficher le nombre d'éléments présents dans votre collection de blogposts.
+- `{{ "this should be uppercase" | upper }}` will output `THIS SHOULD BE UPPERCASE`.
+- `{{ [1,2,3,4,5] | reverse }}` will ouput `5,4,3,2,1`. This filter is quite useful when commbined with date sorted collections in Eleventy.
+- `{{ collections.blogposts | length }}` will display the number of items in your `blogposts` collection.
 
-##### Filtres personnalisés dans Eleventy
+##### Custom filters in Eleventy
 
-Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `.eleventy.js` ces filtres peuvent ensuite être utilisés dans le languge de templating que vous aurez choisi. Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement un dans Eleventy à l'aide de la librairie [`moment.js`](https://momentjs.com/).
+Eleventy allows you to create your own filters using JavaScript and the `.eleventy.js` configuration file. these filters can then be used in most templating languages you choose to use.
+
+For example, Nunjucks does not have a built in date formatting filter. We can easily create one in Eleventy suing the popular [`moment.js`](https://momentjs.com/) library.
 
 ```js
 // required packages
@@ -468,27 +467,29 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Une fois créé, vous pourrez utiliser ce filtre dans vos templates comme suit:
+Once created, we can simply use that filter in our templates like any native one.
 
 ```njk
 <p><time datetime="{{ page.date | date('YYYY-MM-DD') }}">{{ page.date | date("MMMM Do, YYYY") }}</time></p>
 ```
 
-#### Tags de logique
+#### Logic tags
 
-Ces tags permettent l'exécution d'opérations et sont utilisés pour créer des variables, réaliser des boucles, créer des structures de contrôle, etc.
+These tags allow you to execute opérations and can be used to create variables, for loops, control structures, etc.
 
-##### Assignation de variable
+##### Assign variables
+
+The code hereunder will assign all blogposts in the `blogposts` collection to an `allBlogposts` variable and use the built in `reverse` filter to sort them by reverse date order.
 
 Le code ci-dessous va assigner tous les blogposts de la collection à une variable `blogposts` disponible dans la suite du template.
 
 ```njk
-{% set blogposts = collections.blogposts %}
+{% set blogposts = collections.blogposts | reverse %}
 ```
 
-##### Structures de contôle
+##### Control structures
 
-Nunjucks permet d'utiliser les structure de contrôle traditionelles telles que `if` et `else`, les opérateurs de comparaison tels que `===`, `!==`, `>`, etc. ainsi que les opérateurs logique comme `and`, `or` et `not`.
+Nunjucks will allow you to use traditional control structures like `if` and `else` as well as comparaison operators like `===`, `!==`, `>` or logical operators like `and`, `or` and `not`.
 
 ```njk
 {% if collections.blogposts | length %}
@@ -502,27 +503,31 @@ Nunjucks permet d'utiliser les structure de contrôle traditionelles telles que 
 {% endif %}
 ```
 
-##### Boucle `for`
+##### `for` loop
 
-Lorsque vous devrez afficher des données, qu'elles proviennent d'API ou de fichiers Markdown, vous devrez parcourir des tableaux ou des dictionnaires avec des boucles `for`. Voici par exemple comment afficher dans une liste les titres et introduction de tous vos blogposts.
+When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or disctionnaries using `for` loops. Let's create a simple exemple by displaying title and introductions for all our blogposts in an HTML list.
 
 ```njk
-{% set blogposts = collections.blogposts %}
+{% set blogposts = collections.blogposts | reverse %}
 {% for entry in blogposts %}
-  <ul>
-    <h2><a href="{{ entry.url }}">{{ entry.data.title }}</a></h2>
-    <p>{{ entry.data.intro }}</p>
-  </ul>
+  {% if loop.first %}<ul>{% endif %}
+    <article>
+      <h2><a href="{{ entry.url }}">{{ entry.data.title }}</a></h2>
+      <p>{{ entry.data.intro }}</p>
+    </article>
+  {% if loop.last %}</ul>{% endif %}
 {% else %}
   <p>No blogposts found</p>
 {% endfor %}
 ```
 
-### DRY: layout et includes
+You will notice that we can use `loop.first` and `loop.last` to only spit out the `<ul>` and `</ul>` in the first and last iteration of the loop, respectively. In Nunjucks, an `else` clause is executed when no data is returned, which allows us to display a warning in HTML.
 
-En plus d'un tag `{% include %}`, Nunjucks utilise l'héritage de template comme modèle de layout avec `{% extends %}`. Ce modèle permet de définir des blocks dans un template que les templates enfants vont venir surdéterminer. Les chaînes de templates peuvent être aussi longues que souhaitées.
+### Layouts, includes, macros and shortcodes
 
-Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuratioin `.eleventy.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
+on top of offering you an `{% include %}` tag, Nunjucks uses template inheritance as its layout model with `{% extends %}`. This allows you to define blocks with `{% block blockname %}` in a template and then to override the content of those blocks with child templates that extends the parent one. These chains of templates can be as long as you wish.
+
+Includes as well as template inhéritence can be used with Eleventy. The ony quirk is that templates to extend as well as template to include must all be located in the includes directory specified in your `.eleventy.js` configuration file. By default, this directory is `_includes` and the path you specify in your config file is relative to your source directory.
 
 **.eleventy.js**
 ```js
@@ -533,16 +538,18 @@ module.exports = function(eleventyConfig) {
       input: "src",
       output: "dist",
       // path is relative to the input directory
-      // "_includes" is th default value
+      // "_includes" is the default value
       includes: "_includes"
     }
   };
 };
 ```
 
-Lorsqu'un template parent est étendu par un template enfant, les variables définies dans le template enfant sont accessibles dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquels des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilités de créer des [shortcodes](https://www.11ty.io/docs/shortcodes/).
+When a parent template is extended by a child template, variables defined in the child template are accessible in the parent template.
 
-Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
+Apart from `{% extends %}` and `{% include %}`, Nunjucks allows you to use [macros](https://mozilla.github.io/nunjucks/templating.html#macro) that are reusable code snippets to which you can pass variables. Eleventy has a similar concept with the [shortcodes](https://www.11ty.io/docs/shortcodes/).
+
+Let's come back to our project and create the templates we need using everything we have learned so far.
 
 #### Layouts
 
@@ -585,16 +592,16 @@ Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 </html>
 ```
 
-Voici un exemple simple de fichier inclus utilisé pour le footer.
+Here is a simple included file for the footer
 
-**./src/_includes/partials/blogpost.njk**
+**./src/_includes/partials/sitefooter.njk**
 ```njk
 <div class="c-sitefooter">
   <p>&copy; {{ site.buildTime | date("Y") }} - La casa productions</p>
 </div>
 ```
 
-Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va venir étendre notre layout de base. Ce layout de blogpost va être utilisé par tous les fichiers Markdown de notre collection pour afficher les page de détail.
+As far as blogposts go, we need a special layout which will extend our base layout. This blogpost layout will be used by all the Markdown files in our collection to generate detail pages. This layout is the one specified for all our blogposts using a directory data file (see above).
 
 **./src/_includes/layouts/blogpost.njk**
 ```njk
@@ -642,7 +649,7 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
 
 #### Pages
 
-Voici un exemple de template pour la page about.
+Here is an example of template for the about page, where will will display a list of our team members. It extends our base layout and sets several variables that will be availe in the base layout.
 
 **./src/pages/about.njk**
 ```njk
@@ -682,7 +689,9 @@ permalink: /about/index.html
 {% endblock %}
 ```
 
-Pour la page d'archive de notre blog, nous allons utiliser la fonction de pagination d'Eleventy. Celle fonctionne en spécifiant quelles sont les données à paginer, combien d'éléments doivent être affichés par page et quel alias doit être utilisé pour les données une fois paginées.
+### Pagination
+
+For the archive page of our blog, we will use [pagination](https://www.11ty.io/docs/pagination/) in Eleventy. Pagination simply specifies what `data` must be paginated (this can be any iterable), how many iems must be displayed per page with `size` and which `alias` must be used for the paginated data.
 
 **./src/pages/blog.njk**
 ```njk
@@ -734,12 +743,11 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
 {% endblock %}
 ```
 
-### Pagination
+The pagination function in Eleventy is much more prowerful than it seems at first sight. If the data for our blogposts came as big JSON file retruned by an API, we could use the `./src/_data/_blogposts.js` file as a data source and use the same pagination function to generate all the detail pages with just one file. We just have to specify a value of `1` for `size` and to craft a dynamic permalink pattern that corresponds to the URL we want.
 
-La [fonction de pagination d'Eleventy](https://www.11ty.io/docs/pagination/) est bien plus puissante qu'elle n'y parait au premier abord. Si les données pour nos blogposts provenaient d'une API, nous pourrions utiliser ce fichier `./src/_data/_blogposts.js` et la même fonction de pagination pour générer toutes les pages de détail. Il suffit de spécifier une valeur de `1` pour le paramètre `size` et de préciser un pattern de `permalink` correspondant aux URL souhaitées.
+Here is a simplified template we could use for that.
 
-Voici un exemple de template simplifié:
-
+**./src/pages/blogpost_entry.njk**
 ```njk
 ---
 pagination:
@@ -764,13 +772,13 @@ permalink: blog/{{ blogpost.slug }}/index.html
 {% endblock %}
 ```
 
-### Exercice à faire ensemble
+### Exercise for the remainder of the workshop
 
-Partir des templates statiques fournis pour:
+Start with the provided static templates to create a fully functionnal blog together.
 
-- Configurer Eleventy et créer un filtre de date et un filtre de limite
-- Créer une page d'accueil listant les 6 derniers blogposts
-- Créer une page d'archive paginée pour le blog
-- Créer les pages de détail pour tous les blogposts
-- Créer une page about avec les members de l'équipe
-- Créer une navigation avec un fichier data
+- Configure Eleventy and create a date and a limit filter
+- Generate a homepage with the list of the latest 6 blogposts using the `limit` filter
+- Generate a simple paginated archive for all our blogposts
+- Generate detail pages for blogposts
+- Create an about page listing team members and providing contact details
+- Create a navigation (home, blog, about) displaying the current section using a data file

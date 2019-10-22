@@ -4,7 +4,7 @@
 
 [Eleventy](https://www.11ty.io) est un générateur de site statique (Static Site Generator ou SSG en anglais) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Cet outil vous permet de développer des sites basés sur des templates et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
 
-[Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/) écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
+[Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/), écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
 
 Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tout d'abord, Eleventy est écrit en Node et vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser un [large choix de langages de templating](https://www.11ty.io/docs/languages/). Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de [Mozilla](https://www.mozilla.org).
 
@@ -772,11 +772,11 @@ permalink: blog/{{ blogpost.slug }}/index.html
 
 ### Exercice
 
-Partir des templates statiques fournis pour créer un blog fonctionnel ensemble.
+Partir des templates statiques fournis pour créer un blog fonctionnel.
 
 - Configurer Eleventy et créer un filtre de date et un filtre de limite
 - Générer une page d'accueil listant les 6 derniers blogposts en utilisant le filtre `limit`
 - Générer une page d'archive paginée pour le blog
 - Générer les pages de détail pour tous les blogposts
 - Générer une page about avec les members de l'équipe
-- Générer une navigation avec un fichier data
+- Générer une navigation (home, blog, about) avec un fichier data. la navigation doit mettre en évidence la section en cours.

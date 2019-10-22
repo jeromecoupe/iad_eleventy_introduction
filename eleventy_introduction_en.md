@@ -4,9 +4,9 @@
 
 [Eleventy](https://www.11ty.io) is a Static Site Genertor created and maintained by [Zach Leatherman](https://www.zachleat.com/). Eleventy allows you to develop websites based on templates and data or content files (YAML / Markdown / HTML / JSON / JS) in a source directory. Based on those source files, Eleventy will generate a fully functional static site in a destination folder. You will then be able to deploy that site on any web server capable of serving static files.
 
-The [stated goal of Eleventy]((https://www.11ty.io/docs/)) is to be an alternative to [Jekyll](https://jekyllrb.com/) written in Node rather than in Ruby. Just as Jekyll it is a very approachable and simple to use SSG once the basic principles are well understood.
+The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Just as Jekyll it is a very approachable and simple to use SSG once the basic principles are well understood.
 
-Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, Eleventy allows you to use the NPM ecosystem to build extends its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). We will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all the code samples in this course.
+Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, Eleventy allows you to use the NPM ecosystem to extends its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). We will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all the code samples in this course.
 
 ## 2. Installation and configuration
 
@@ -33,15 +33,15 @@ We can then install Eleventy as a local dependency for our project:
 npm install --save-dev @11ty/eleventy
 ```
 
-At this point, Eleventy will simply create a `node_modules` folder and install itself, but nothing more. To see it in action, we will have to create at lest one file. Let's simply create a basic `index.html` file and that Eleventy will copy in the default `_site` destination folder.
+At this point, Eleventy will simply create a `node_modules` folder and install itself, but nothing more. To see it in action, we will have to create at lest one file. Let's simply create a basic `index.html` file and Eleventy will copy in the default `_site` destination folder.
 
-Once we have created that file, we can learn the basic Eleventy command
+Once we have created that file, we can learn the basic Eleventy commands:
 
 - `npx eleventy`: to run Eleventy
-- `npx eleventy --serve`: to run BrowserSync and have a local web server that will reload the site in your browser when the site changes
+- `npx eleventy --serve`: to run Browsersync and have a local web server that will reload the site in your browser when the site changes
 - `npx eleventy --help`: to explore the list of available commands and flags
 
-If we now type `npx eleventy` in our terminal, Eleventy will create a `_site` folder and copy our `index.html` file in it. Pretty impressive, right ?
+If we now type `npx eleventy` in our terminal, Eleventy will create a `_site` folder and copy our `index.html` file into it. Pretty impressive, right ?
 
 Let's now configure Eleventy to better suit our needs.
 
@@ -51,9 +51,9 @@ We will make a simple project architecture and configure Eleventy by creating a 
 
 - Delete the `./site` folder created by Eleventy
 - Create an `./src` folder and move `index.html` to it
-- Create an `.eleventy.js` file at the root of our project
+- Create an `.eleventy.js` file at the root of the project
 
-Let's start by specify source and destination folders for Eleventy:
+Let's start by specify source and destination directories for Eleventy:
 
 **.eleventy.js**
 ```js
@@ -97,13 +97,13 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Eleventy will now copy the `./src/assets/` directory and everything it contains to the output directory while preserving the directories structure.
+Eleventy will now copy the `./src/assets/` directory and everything it contains to the output directory while preserving the directories' structures.
 
 ### Ignore directories and files
 
-By default, Eleventy will ignore the `node_modules` directory as well as the folder, files and globs specified in your `.gitignore` file.
+By default, Eleventy will ignore the `node_modules` directory as well as the folders, files and globs specified in your `.gitignore` file.
 
-We can also create a `.emeventyignore` folder at the root of our project and spécify a file, directory or glob pattner per line to explicitly tell Eleventy to ignore all matching files and directories. I have painfully learned that you always want to be as explict as possible, not ony in your code actually. Let's do this.
+We can also create a `.eleventyignore` file at the root of our project and spécify a file, directory or glob pattern per line to explicitly tell Eleventy to ignore all matching files and directories. I have painfully learned that you always want to be as explict as possible, and that's true for many othe things than code, actually. Let's do this.
 
 **.eleventyignore**
 ```txt
@@ -113,11 +113,11 @@ dist/
 
 ### Assets pipeline and build tools
 
-Eleventy doesn't have an asset pipeline or a build tool by default. I almost always integrate it with build tools, be it with NPM scripts, Gulp, Webpack or any other alternative.
+Eleventy doesn't have an asset pipeline or a build tool by default. I almost always integrate it with build tools, be it with NPM scripts, Gulp, Webpack or any other alternatives.
 
 When you start using build tools to create an assets pipeline, you will likely have to modify your `addPassthroughCopy` and ignore assets directories that will not need to be handled by Eleventy because your build tools and scripts will take care of them and generate what you need in your `./dist` directory.
 
-If, for example, you are using NPM scripts to build your CSS from Sass files or you use Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
+If, for example, you are using NPM scripts to build your CSS from Sass files or if you use Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
 
 **.eleventy.js**
 ```js
@@ -144,7 +144,7 @@ src/assets/scss/
 src/assets/js/
 ```
 
-Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories. Your build tools and scripts will generate the required outputs in your `./dist` directory.
+Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist` directory.
 
 Personnally, I use Gulp combined with Webpack for most of my projects. Eleventy can very easily be integrated to this kind of workflow.
 
@@ -155,7 +155,7 @@ Eleventy allows you to work with two data sources:
 1. **Markdown files** (for the main content) and YAML front matter (for the rest of the data structure) that can easily be turned into collections (more on that later).
 2. **JSON and/or JS data files** that can either be static or dynamic (fetched from an API).
 
-Thse two types of data sources are not mutually exlcusive and are, in fact, used simultaneously in most projects. Let's dive in.
+These two types of data sources are not mutually exclusive and are, in fact, used simultaneously in most projects. Let's dive in.
 
 ### Collections
 
@@ -163,9 +163,9 @@ Collections in Eleventy allow you to group content items in interesting ways and
 
 #### Markdown and YAML front matter
 
-Markdown files coupled with a YAML front matter allow you tyo use simple etxt files as structured data sources. It's a staple feature of most SSG out there.
+Markdown files coupled with a YAML front matter allow you tyo use simple text files as structured data sources. It's a staple feature of most SSG out there.
 
-The Mardown part of the file generally represents the main content of your data and is generally converted to HTML. The YAML front matter allow you to create a data structure with diffrent types of data (strings, arrays, objects, etc.).
+The Mardown part of the file generally represents the main content of your data and is generally converted to HTML. The YAML front matter allows you to create a data structure with different types of data (strings, arrays, objects, etc.).
 
 If you want to build a blog, your blogposts are going to be represented by Markdown files with a YAML front matter that could look something like the following:
 
@@ -189,7 +189,7 @@ categories:
 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibus reiciendis dignissimos accusantium illo, voluptates consequuntur fugit amet quo sed nisi facere animi incidunt assumenda exercitationem, nam omnis perspiciatis praesentium.
 ```
 
-Let's say you also need to model a data structire for a team. Each team member could be represented by a file like this one:
+Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
 
 **./src/projects/jerome-coupe.md**
 ```md
@@ -202,14 +202,14 @@ github: "https://github.com/jeromecoupe"
 website: "https://www.webstoemp.com"
 ---
 
-Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not coding, he might have been seen downtown, drinking a few craft beers with friends.
+Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgium. When not designing or coding, he might have been seen downtown, drinking a few craft beers with friends.
 ```
 
 #### Collection API
 
-For Eleventy to group those files in an array that will allow you to manipulate that array in your templates, you just have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
+For Eleventy to group those files in an array that will allow you to manipulate it in your templates, you just have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
 
-To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `.eleventy.js` file
+To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `.eleventy.js` file.
 
 This API offers you [different methods to declare your collections](https://www.11ty.io/docs/collections/#collection-api-methods) that each have their use. My favourite and most used one by far is `getFilteredByGlob(glob)` that allows you create a collection from all files matching a defined glob pattern.
 
@@ -251,7 +251,7 @@ When a collection is created, the following keys are automatically created:
 - `outputPath`: the full path to the output file to be written for this content
 - `url`: url used to link to this piece of content. In general, this is based on the `permalink` key defined for your content items.
 - `date`: the resolved date used for sorting. Read more about [Content Dates](https://www.11ty.io/docs/dates/) in the documentation.
-- `data`: all data for this piece of content. Contains the keys/values defined in the YAML front-matter and the data inherited from layouts.
+- `data`: all data for this piece of content. Contains the keys/values defined in the YAML front matter and the data inherited from layouts.
 - `templateContent`: the rendered content of this template. Does not include layout wrappers.
 
 #### Sort and filter your collections
@@ -302,7 +302,7 @@ module.exports = function(eleventyConfig) {
 
 ### Data files (JS ou JSON)
 
-Aside from collections, the other data source you can use with Eleventy are data files. Those can be static or dynamic (retrieved from an API).
+Aside from collections, the other data source you can use with Eleventy are data files. Those can be static or dynamic (fetched from an API).
 
 By default, these files have to be stored in the `./src/_data/` directory. This can be modified uing the `.eleventy.js` configuration file.
 
@@ -340,7 +340,7 @@ module.exports = {
 };
 ```
 
-Those values can be accessed in your templates by using the filename as a key. For exemple, data contained in a `./src/_data/site.js` file will be accessible in your templates using the `site` variable.
+Those values can be accessed in your templates by using the filename as a key. Data contained in a `./src/_data/site.js` file will thus be accessible in your templates using the `site` variable.
 
 #### Dynamic data files
 
@@ -358,7 +358,7 @@ By default, Eleventy will use the folders and files structure in your source dir
 
 This default behaviour can be changed by using a static or dynamic `permalink` variable in your content files or in your templates.
 
-For example, to create a blog, you will need an index page at the following URL `/blog/index.html`. Your Nunjucks template `./src/pages/blog.njk` should have that as the value of the permalink key in its YAML front matter.
+For example, to create a blog, you will need an index page at the following URL `/blog/index.html`. Your Nunjucks template `./src/pages/blog.njk` should have that as the value of the `permalink` key in its YAML front matter.
 
 ```text
 ---
@@ -374,7 +374,7 @@ permalink: "/blog/{{ page.fileSlug }}/index.html"
 ---
 ```
 
-If you have a collection to group all your team memebers but you do not need a detail page for each member, you can use `false` as the value of the `permalink` key. Eleventy will not generate detail pages. In most of those cases, you won't need a dedicated layour either.
+If you have a collection to group all your team memebers but you do not need a detail page for each member, you can use `false` as the value of the `permalink` key. Eleventy will not generate detail pages. In most of those cases, you won't need a dedicated `layout` either.
 
 ```text
 ---
@@ -383,11 +383,11 @@ layout: false
 ---
 ```
 
-We will see later that you will then need to use the `templateContent` key to display the content of your Markdown files.
+We will see later that you will then need to use the `templateContent` key to display the content of these Markdown files.
 
 #### Default values and directory data files
 
-Instead of having to specify the same YAML front matter key / value apir for a bunch of files, Eleventy allows you to specify the same key/value pair for all the files in a directory by using JS or JSON [directory data files](https://www.11ty.io/docs/data-template-dir/).
+Instead of having to specify the same YAML front matter key / value pair for a bunch of files, Eleventy allows you to specify the same key/value pair for all the files in a directory by using JS or JSON [directory data files](https://www.11ty.io/docs/data-template-dir/).
 
 If you want to specify the same key/value pair for `permalink` and `layout` for all of your blogposts, you can simply add an `./src/blog/blog.json`, `./src/blog/blog.11data.json` or `./src/blog/blog.11data.js` directory data file in the `./src/blog` directory and specify them there. Eleventy will apply those values to all the files in that directory or in subdiretories.
 
@@ -409,11 +409,11 @@ module.exports = {
 
 ## 4. Templating with Eleventy and Nunjucks
 
-Eleventy allows you to work with several templating languages. Nujucks from Mozilla is powerful and easy to use, so that's generally my default choice. The [documentation](https://mozilla.github.io/nunjucks/) is quite well done so we will not cover everything. We will learn enough to create the templates we need for our small blog project, and you can expand on your own later on.
+Eleventy allows you to work with several templating languages. Nujucks from Mozilla is powerful and easy to use, so that's generally my default choice. The [documentation](https://mozilla.github.io/nunjucks/) is quite well done so we don't need to cover everything. We will learn enough to create the templates we need for our small blog project, and you can expand your knowledge on your own later on.
 
 ### Main Nunjucks tags
 
-Nunjucks has three main types of tags
+Nunjucks has three main types of tags:
 
 - comments: `{# this is a comment #}`
 - display: `{{ variable }}`
@@ -427,12 +427,12 @@ This one is pretty easy: `{# This is a comment #}`. Comments never appear in the
 
 This tags allow you to display variables like strings, numbers, booleans, arrays and objects in your templates. Most of the time, you will display variables created by you or by Eleventy when it runs. You can access properties with a dot syntax, just like in JavaScript. Those tags also allow you to perform simple maths operations or string concatenation.
 
-Exemples:
+Examples:
 
-- `{{ "Hello World" }}`: affiche la chaîne de caractères "Hello World"
-- `{{ site.title }}`: affiche la valeur de la clef `title` de l'objet `site`
+- `{{ "Hello World" }}`: displays the string "Hello World"
+- `{{ site.title }}`: displays the value of the `title` key of the `site` object
 - `{{ site.title ~ " - is an awesome site" }}` will concatenate the value of the key `title` of the site object with the string next to it
-- `{{ 8 + 2 }}`: affiche `10`
+- `{{ 8 + 2 }}`: displays `10`
 
 #### Filters
 
@@ -446,7 +446,7 @@ Filters are essentially devoted to manipulate strings, numbers, booleans, arrays
 
 Eleventy allows you to create your own filters using JavaScript and the `.eleventy.js` configuration file. these filters can then be used in most templating languages you choose to use.
 
-For example, Nunjucks does not have a built in date formatting filter. We can easily create one in Eleventy suing the popular [`moment.js`](https://momentjs.com/) library.
+For example, Nunjucks does not have a built in date formatting filter. We can easily create one in Eleventy using the popular [`moment.js`](https://momentjs.com/) library.
 
 ```js
 // required packages
@@ -481,8 +481,6 @@ These tags allow you to execute opérations and can be used to create variables,
 
 The code hereunder will assign all blogposts in the `blogposts` collection to an `allBlogposts` variable and use the built in `reverse` filter to sort them by reverse date order.
 
-Le code ci-dessous va assigner tous les blogposts de la collection à une variable `blogposts` disponible dans la suite du template.
-
 ```njk
 {% set blogposts = collections.blogposts | reverse %}
 ```
@@ -505,7 +503,7 @@ Nunjucks will allow you to use traditional control structures like `if` and `els
 
 ##### `for` loop
 
-When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or disctionnaries using `for` loops. Let's create a simple exemple by displaying title and introductions for all our blogposts in an HTML list.
+When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or objects using `for` loops. Let's create a simple exemple by displaying title and introductions for all our blogposts in an HTML list.
 
 ```njk
 {% set blogposts = collections.blogposts | reverse %}
@@ -521,13 +519,13 @@ When you have to display data, whether they come from an API or from Markdown fi
 {% endfor %}
 ```
 
-You will notice that we can use `loop.first` and `loop.last` to only spit out the `<ul>` and `</ul>` in the first and last iteration of the loop, respectively. In Nunjucks, an `else` clause is executed when no data is returned, which allows us to display a warning in HTML.
+You will notice that we can use `loop.first` and `loop.last` to only spit out the `<ul>` and `</ul>` in the first and last iterations of the loop, respectively. In Nunjucks, an `else` clause is executed when no data is returned, which allows us to display a warning in HTML.
 
 ### Layouts, includes, macros and shortcodes
 
-on top of offering you an `{% include %}` tag, Nunjucks uses template inheritance as its layout model with `{% extends %}`. This allows you to define blocks with `{% block blockname %}` in a template and then to override the content of those blocks with child templates that extends the parent one. These chains of templates can be as long as you wish.
+On top of offering you an `{% include %}` tag, Nunjucks uses template inheritance as its layout model with `{% extends %}`. This allows you to define blocks with `{% block blockname %}` in a template and then to override the content of those blocks with child templates that extends the parent one. These chains of templates can be as long as you wish.
 
-Includes as well as template inhéritence can be used with Eleventy. The ony quirk is that templates to extend as well as template to include must all be located in the includes directory specified in your `.eleventy.js` configuration file. By default, this directory is `_includes` and the path you specify in your config file is relative to your source directory.
+Includes as well as template inhéritance can be used with Eleventy. The only quirk is that templates to extend as well as template to include must all be located in the includes directory specified in your `.eleventy.js` configuration file. By default, this directory is `_includes` and the path you specify in your config file is relative to your source directory.
 
 **.eleventy.js**
 ```js
@@ -649,7 +647,7 @@ As far as blogposts go, we need a special layout which will extend our base layo
 
 #### Pages
 
-Here is an example of template for the about page, where will will display a list of our team members. It extends our base layout and sets several variables that will be availe in the base layout.
+Here is an example of template for the about page, where will will display a list of our team members. It extends our base layout and sets several variables that will be available in the base layout.
 
 **./src/pages/about.njk**
 ```njk
@@ -743,7 +741,7 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
 {% endblock %}
 ```
 
-The pagination function in Eleventy is much more prowerful than it seems at first sight. If the data for our blogposts came as big JSON file retruned by an API, we could use the `./src/_data/_blogposts.js` file as a data source and use the same pagination function to generate all the detail pages with just one file. We just have to specify a value of `1` for `size` and to craft a dynamic permalink pattern that corresponds to the URL we want.
+The pagination function in Eleventy is much more prowerful than it seems at first sight. If the data for our blogposts came as big JSON file retruned by an API, we could use the `./src/_data/_blogposts.js` file as a data source and use the same pagination function to generate all the detail pages with just one file. We just have to specify a value of `1` for `size` and to craft a dynamic permalink pattern that corresponds to the URLs we want.
 
 Here is a simplified template we could use for that.
 
@@ -774,11 +772,11 @@ permalink: blog/{{ blogpost.slug }}/index.html
 
 ### Workshop exercise
 
-Start with the provided static templates to create a fully functionnal blog together.
+Start with the provided static templates to create a fully functionnal blog.
 
 - Configure Eleventy and create a date and a limit filter
 - Generate a homepage with the list of the latest 6 blogposts using the `limit` filter
 - Generate a simple paginated archive for all our blogposts
 - Generate detail pages for blogposts
 - Create an about page listing team members and providing contact details
-- Create a navigation (home, blog, about) displaying the current section using a data file
+- Create a navigation using a data file (home, blog, about). The navigation must highlight the current section.

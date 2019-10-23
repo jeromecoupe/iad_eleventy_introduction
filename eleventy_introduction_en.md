@@ -4,9 +4,9 @@
 
 [Eleventy](https://www.11ty.io) is a Static Site Genertor created and maintained by [Zach Leatherman](https://www.zachleat.com/). Eleventy allows you to develop websites based on templates and data or content files (YAML / Markdown / HTML / JSON / JS) in a source directory. Based on those source files, Eleventy will generate a fully functional static site in a destination folder. You will then be able to deploy that site on any web server capable of serving static files.
 
-The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Just as Jekyll it is a very approachable and simple SSG to use, once the basic principles are well understood.
+The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Just as Jekyll, 11ty is a very approachable and simple SSG to use, once the basic principles are well understood.
 
-Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, Eleventy allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
+Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, 11ty allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
 
 ## 2. Installation and configuration
 
@@ -43,7 +43,7 @@ Once we have created that file, we can learn some basic Eleventy commands:
 
 Now if we type `npx eleventy` in our terminal, Eleventy will create a `_site` folder and copy our `index.html` file into it. Pretty impressive, right?
 
-Let's configure Eleventy to better suit our needs now.
+Let's configure Eleventy to better suit our needs.
 
 ### Configuration
 
@@ -214,7 +214,7 @@ To create a collection, you can assign the same `tag` to various content items. 
 
 This API offers you [different methods to declare your collections](https://www.11ty.io/docs/collections/#collection-api-methods) that each have their use. My favourite and most used one by far is `getFilteredByGlob(glob)` that allows you create a collection from all files matching a defined glob pattern.
 
-If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quiet simple. You have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
+If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quite simple. You have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
 
 ```js
 module.exports = function(eleventyConfig) {

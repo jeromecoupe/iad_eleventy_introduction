@@ -4,7 +4,7 @@
 
 [Eleventy](https://www.11ty.io) is a Static Site Genertor created and maintained by [Zach Leatherman](https://www.zachleat.com/). Eleventy allows you to develop websites based on templates and data or content files (YAML / Markdown / HTML / JSON / JS) in a source directory. Based on those source files, Eleventy will generate a fully functional static site in a destination folder. You will then be able to deploy that site on any web server capable of serving static files.
 
-The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Just as Jekyll, 11ty is a very approachable and simple SSG to use, once the basic principles are well understood.
+The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Like Jekyll, 11ty is a very approachable and simple SSG to use, once the basic principles are well understood.
 
 Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, 11ty allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
 
@@ -47,7 +47,7 @@ Let's configure Eleventy to better suit our needs.
 
 ### Configuration
 
-We will make a simple project architecture and configure Eleventy by creating a `.eleventy.js` configuration file at the root of our project.
+We will make a basic project architecture and configure Eleventy by creating a `.eleventy.js` configuration file at the root of our project.
 
 - Remove Eleventy's default destination `./site` folder.
 - Create a `./src` folder and move `index.html` into it.
@@ -164,7 +164,7 @@ Collections in Eleventy allow you to group content items in interesting ways and
 
 #### Markdown and YAML front matter
 
-Markdown files coupled with a YAML front matter allow you to use simple text files as structured data sources. It's a staple feature of most SSG out there.
+Markdown files coupled with a YAML front matter allow you to use text files as structured data sources. It's a staple feature of most SSG out there.
 
 The Markdown part of the file generally represents the main content of your data and is generally converted to HTML. The YAML front matter allows you to create a data structure with different types of data (strings, arrays, objects, etc.).
 
@@ -214,7 +214,7 @@ To create a collection, you can assign the same `tag` to various content items. 
 
 This API offers you [different methods to declare your collections](https://www.11ty.io/docs/collections/#collection-api-methods) that each have their use. My favourite and most used one by far is `getFilteredByGlob(glob)` that allows you create a collection from all files matching a defined glob pattern.
 
-If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quite simple. You have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
+If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quite easy. You have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
 
 ```js
 module.exports = function(eleventyConfig) {
@@ -426,7 +426,7 @@ This one is pretty easy: `{# This is a comment #}`. Comments never appear in the
 
 #### Display tags: variables and properties
 
-This tags allow you to display variables like strings, numbers, booleans, arrays and objects in your templates. Most of the time, you will display variables created by you or by Eleventy when it runs. You can access properties using dot syntax, just like in JavaScript. Those tags also allow you to perform simple maths operations or string concatenation.
+This tags allow you to display variables like strings, numbers, booleans, arrays and objects in your templates. Most of the time, you will display variables created by you or by Eleventy when it runs. You can access properties using dot syntax, like in JavaScript. Those tags also allow you to perform maths operations or string concatenation.
 
 Examples:
 
@@ -504,7 +504,7 @@ Nunjucks will allow you to use traditional control structures like `if` and `els
 
 ##### `for` loop
 
-When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or objects using `for` loops. Let's create a simple example by displaying title and introductions for all our blogposts in an HTML list.
+When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or objects using `for` loops. Let's display title and introductions for all our blogposts in an HTML list.
 
 ```njk
 {% set blogposts = collections.blogposts | reverse %}
@@ -591,7 +591,7 @@ Let's come back to our project and create the templates we need using everything
 </html>
 ```
 
-Here is a simple included file for the footer
+Here is an included file for the footer
 
 **./src/_includes/partials/sitefooter.njk**
 ```njk
@@ -742,9 +742,9 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
 {% endblock %}
 ```
 
-The pagination function in Eleventy is much more powerful than it seems at first sight. If the data for our blogposts came as a big JSON file returned by an API, we could use the `./src/_data/_blogposts.js` file as a data source and use the same pagination function to generate all the detail pages with just one file. We just have to specify a value of `1` for `size` and to craft a dynamic permalink pattern that corresponds to the URLs we want.
+The pagination function in Eleventy is much more powerful than it seems at first sight. If the data for our blogposts came as a big JSON file returned by an API, we could use the `./src/_data/_blogposts.js` file as a data source and use the same pagination function to generate all the detail pages with a single file. In order to accomplish that, we have to specify a value of `1` for `size` and to craft a dynamic permalink pattern that corresponds to the URLs we want.
 
-Here is a simplified template we could use for that.
+Here is a simplified template we could use:
 
 **./src/pages/blogpost_entry.njk**
 ```njk
@@ -777,7 +777,7 @@ Start with the provided static templates to create a fully functional blog.
 
 - Configure Eleventy and create a date and a limit filter
 - Generate a homepage with the list of the latest 6 blogposts using the `limit` filter
-- Generate a simple paginated archive for all our blogposts
+- Generate a paginated archive for all our blogposts
 - Generate detail pages for blogposts
 - Create an about page listing team members and providing contact details
 - Create a navigation using a data file (home, blog, about). The navigation must highlight the current section.

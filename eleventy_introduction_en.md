@@ -6,7 +6,7 @@
 
 The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Just as Jekyll it is a very approachable and simple SSG to use, once the basic principles are well understood.
 
-Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, Eleventy allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favorite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
+Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, Eleventy allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
 
 ## 2. Installation and configuration
 
@@ -155,7 +155,7 @@ Eleventy allows you to work with two data sources:
 1. **Markdown files** (for the main content) and YAML front matter (for the rest of the data structure) that can easily be turned into collections (more on that later).
 2. **JSON and/or JS data files** that can either be static or dynamic (fetched from an API).
 
-These two types of data sources are not mutually exclusive and are, in fact, used simultaneously in most projects. 
+These two types of data sources are not mutually exclusive and are, in fact, used simultaneously in most projects.
 Let's dive in.
 
 ### Collections
@@ -357,7 +357,7 @@ By default, Eleventy will use the folders and files structure in your source dir
 - `./src/test.html` will generate `./dist/test/index.html` with `/test/` as the URL.
 - `./src/subdir/index.html` will generate `./dist/subdir/index.html` with `/subdir/` as the URL.
 
-This default behavior can be changed by using a static or dynamic `permalink` variable in your content files or in your templates.
+This default behaviour can be changed by using a static or dynamic `permalink` variable in your content files or in your templates.
 
 For example, to create a blog, you will need an index page at the following URL `/blog/index.html`. Your Nunjucks template `./src/pages/blog.njk` should have that as the value of the `permalink` key in its YAML front matter.
 
@@ -424,9 +424,9 @@ Nunjucks has three main types of tags:
 
 This one is pretty easy: `{# This is a comment #}`. Comments never appear in the rendered code.
 
-#### Display tags: variables and concatenation
+#### Display tags: variables and properties
 
-This tags allow you to display variables like strings, numbers, booleans, arrays and objects in your templates. Most of the time, you will display variables created by you or by Eleventy when it runs. You can access properties with a dot syntax, just like in JavaScript. Those tags also allow you to perform simple maths operations or string concatenation.
+This tags allow you to display variables like strings, numbers, booleans, arrays and objects in your templates. Most of the time, you will display variables created by you or by Eleventy when it runs. You can access properties using dot syntax, just like in JavaScript. Those tags also allow you to perform simple maths operations or string concatenation.
 
 Examples:
 

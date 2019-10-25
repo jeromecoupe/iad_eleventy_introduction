@@ -284,7 +284,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-If you need to filter a collection to exclude some data, you can use the JavaScript `filter` method. You can for example only include the blogposts that do not have a `draft` key set to `true` in their front matter and that have a more recent publication date than the one of the site generation.
+If you need to filter a collection to exclude some data, you can use the JavaScript `filter` method. You can for example only include the blogposts that do not have a `draft` key set to `true` in their front matter and that have a publication date less recent than site generation date.
 
 ```js
 const now = new Date();

@@ -19,13 +19,13 @@ mkdir eleventy-portfolio
 cd eleventy-portfolio
 ```
 
-Vous devrez installer [Node](https://nodejs.org) sur votre machine si ce n'est pas déjà fait. L'installation se fait à l'aide d'un module NPM. Pour installer Eleventy, il faut commencer par créer dans notre projet un fichier `package.json` qui reprendra toutes nos dépendences Node.
+Vous devrez installer [Node](https://nodejs.org) sur votre machine si ce n'est pas déjà fait. L'installation se fait à l'aide d'un module NPM. Pour installer Eleventy, il faut commencer par créer dans notre projet un fichier `package.json` qui reprendra toutes nos dépendances Node.
 
 ```text
 npm init -y
 ```
 
-Dans un premier temps, vous pouvez simplement accepter l'ensemble des réponses aux questions posées. Vous pourrez toujours y revenir par après en éditant votre fichier `package.json`. Voici la [documentation complète](https://docs.npmjs.com/files/package.json) pour vous aider à comprendre quelles sont les paramètres et options disponibles.
+Dans un premier temps, vous pouvez simplement accepter l'ensemble des réponses aux questions posées. Vous pourrez toujours y revenir par après en éditant votre fichier `package.json`. Voici la [documentation complète](https://docs.npmjs.com/files/package.json) pour vous aider à comprendre quels sont les paramètres et options disponibles.
 
 Nous pouvons ensuite installer Eleventy comme dépendance locale pour notre projet:
 
@@ -103,7 +103,7 @@ Eleventy va maintenant copier ce dossier ainsi que tout ce qu'il contient.
 
 Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre éventuel fichier `.gitignore`.
 
-Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possoble, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
+Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possible, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
 
 **.eleventyignore**
 ```txt
@@ -211,7 +211,7 @@ Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de le
 
 Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `.eleventy.js`.
 
-Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichuer correspondent à un même glob pattern.
+Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichiers correspondants à un même glob pattern.
 
 Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `.eleventy.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
 
@@ -244,16 +244,16 @@ module.exports = function(eleventyConfig) {
 
 Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacré au templating.
 
-Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est à dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
+Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est-à-dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
 
 Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées:
 
-- `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy)
+- `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy).
 - `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.io/docs/data/#fileslug).
-- `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu
+- `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu.
 - `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la clef `permalink`
 - `date`: la date utilisée pour le classement. Pour en savoir plus sur les [dates des éléments de contenus](https://www.11ty.io/docs/dates/), référez-vous à la documentation.
-- `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritée des layouts.
+- `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritées des layouts.
 - `templateContent`: le contenu de ce template une fois rendu par Eleventy. N'inclus pas les templates étendus.
 
 #### Classer et filtrer vos collections
@@ -261,7 +261,7 @@ Lorsqu'une collection est créée, les clefs suivantes sont automatiquement cré
 Lorsque vous créez une collection avec l'API d'Eleventy, les éléments de cette collection sont automatiquement classés en ordre ascendant en utilisant:
 
 1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source ou, à defaut, la date de création de celui-ci.
-2. Si certains fichiers source ont une date identique, le chemin complet (y compris le nom de fichier) est pris en compte
+2. Si certains fichiers source ont une date identique, le chemin complet (y compris le nom de fichier) est pris en compte.  
 
 Si un classement par date correspond à ce que vous souhaitez, vous pouvez éventuellement inverser celui-ci en utilisant le filtre `reverse` de Nunjucks.
 
@@ -369,7 +369,7 @@ permalink: "/blog/index.html"
 ---
 ```
 
-Vous pouvez également utiliser des variables pour créer vos valeurs de `permalink`. Les fichiers Markdown pour vos blogposts pourraient tous avoir la valeur de `permalink` suivante.
+Vous pouvez également utiliser des variables pour créer vos valeurs de `permalink`. Les fichiers Markdown pour vos blogposts pourraient tous avoir la valeur de `permalink` suivante:
 
 ```text
 ---
@@ -428,18 +428,18 @@ Nunjucks possède un tag de commentaire: `{# Ceci est un commentaire #}`. Ceux-c
 
 #### Tags d'affichage et opération simples
 
-Ces tags vous permettent d'afficher des chaines de caractères, nombres, booléens, tableaux et objets dans vos templates. La plupart du temps, vous afficherez des variables créées par vous ou par Eleventy. Une notation pointée permet d'accéder aux propriétés de ces variables, comme en JavaScript. Vous pouvez aussi effectuer des opérations mathématiques simples ou des concaténations de chaîne de caractères.
+Ces tags vous permettent d'afficher des chaînes de caractères, nombres, booléens, tableaux et objets dans vos templates. La plupart du temps, vous afficherez des variables créées par vous ou par Eleventy. Une notation pointée permet d'accéder aux propriétés de ces variables, comme en JavaScript. Vous pouvez aussi effectuer des opérations mathématiques simples ou des concaténations de chaîne de caractères.
 
 Exemples:
 
 - `{{ "Hello World" }}`: affiche la chaîne de caractères "Hello World"
 - `{{ site.title }}`: affiche la valeur de la clef `title` de l'objet `site`
-- `{{ site.title ~ " - is an awesome site" }}` va concaténer la valeur de la clef `title` de l'objet `site` avec la chîne de caractère qui suit
+- `{{ site.title ~ " - is an awesome site" }}` va concaténer la valeur de la clef `title` de l'objet `site` avec la chaîne de caractères qui suit
 - `{{ 8 + 2 }}`: affiche `10`
 
 #### Filtres
 
-Les filtres sont essentiellement destiné à manipuler des chaînes de caractères, nombres, booléens, tableaux et objets tout en les affichants dans vos templates. Nunjucks possède de [nombreux filtres inclus par défaut](https://mozilla.github.io/nunjucks/templating.html#builtin-filters). Voici quelques exemples.
+Les filtres sont essentiellement destinés à manipuler des chaînes de caractères, nombres, booléens, tableaux et objets tout en les affichant dans vos templates. Nunjucks possède de [nombreux filtres inclus par défaut](https://mozilla.github.io/nunjucks/templating.html#builtin-filters). Voici quelques exemples.
 
 - `{{ "this should be uppercase" | upper }}` produira en sortie `THIS SHOULD BE UPPERCASE`.
 - `{{ [1,2,3,4,5] | reverse }}` produira en sortie `5,4,3,2,1` ce filtre est particulièrement utile combiné avec des classements par date dans Eleventy.
@@ -447,7 +447,7 @@ Les filtres sont essentiellement destiné à manipuler des chaînes de caractèr
 
 ##### Filtres personnalisés dans Eleventy
 
-Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `.eleventy.js`. Ces filtres peuvent ensuite être utilisés dans le languge de templating que vous aurez choisi.
+Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `.eleventy.js`. Ces filtres peuvent ensuite être utilisés dans le language de templating que vous aurez choisi.
 
 Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement un dans Eleventy à l'aide de la librairie [`moment.js`](https://momentjs.com/).
 
@@ -490,7 +490,7 @@ Le code ci-dessous va assigner tous les blogposts de la collection à une variab
 
 ##### Structures de contôle
 
-Nunjucks permet d'utiliser les structure de contrôle traditionelles telles que `if` et `else`, les opérateurs de comparaison tels que `===`, `!==`, `>`, etc. ainsi que les opérateurs logique comme `and`, `or` et `not`.
+Nunjucks permet d'utiliser les structures de contrôle traditionelles telles que `if` et `else`, les opérateurs de comparaison tels que `===`, `!==`, `>`, etc. ainsi que les opérateurs logique comme `and`, `or` et `not`.
 
 ```njk
 {% if collections.blogposts | length %}
@@ -528,7 +528,7 @@ Notez que nous pouvons utiliser `loop.first` et `loop.last` pour seulement affic
 
 En plus d'un tag `{% include %}`, Nunjucks utilise l'héritage de template comme modèle de layout avec `{% extends %}`. Ce modèle permet de définir des blocks dans un template que les templates enfants vont venir surdéterminer. Les chaînes de templates peuvent être aussi longues que souhaitées.
 
-Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuratioin `.eleventy.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
+Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuration `.eleventy.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
 
 **.eleventy.js**
 ```js
@@ -546,7 +546,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Lorsqu'un template parent est étendu par un template enfant, les variables définies dans le template enfant sont accessibles dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquels des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilités de créer des [shortcodes](https://www.11ty.io/docs/shortcodes/).
+Lorsqu'un template parent est étendu par un template enfant, les variables définies dans le template enfant sont accessibles dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquels des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilité de créer des [shortcodes](https://www.11ty.io/docs/shortcodes/).
 
 Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 
@@ -648,7 +648,7 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
 
 #### Pages
 
-Voici un exemple de template pour la page about. Ce template étend notre layout de base et défini une série de variables qui y seront accessibles.
+Voici un exemple de template pour la page about. Ce template étend notre layout de base et définit une série de variables qui y seront accessibles.
 
 **./src/pages/about.njk**
 ```njk
@@ -688,7 +688,7 @@ permalink: /about/index.html
 {% endblock %}
 ```
 
-Pour la page d'archive de notre blog, nous allons utiliser la fonction de [pagination](https://www.11ty.io/docs/pagination/). Celle fonctionne en spécifiant quelles sont les données à paginer (`data`), combien d'éléments doivent être affichés par page (`size`) et quel `alias` doit être utilisé pour les données une fois paginées.
+Pour la page d'archive de notre blog, nous allons utiliser la fonction de [pagination](https://www.11ty.io/docs/pagination/). Celle-ci fonctionne en spécifiant quelles sont les données à paginer (`data`), combien d'éléments doivent être affichés par page (`size`) et quel `alias` doit être utilisé pour les données une fois paginées.
 
 **./src/pages/blog.njk**
 ```njk
@@ -778,5 +778,5 @@ Partir des templates statiques fournis pour créer un blog fonctionnel.
 - Générer une page d'accueil listant les 6 derniers blogposts en utilisant le filtre `limit`
 - Générer une page d'archive paginée pour le blog
 - Générer les pages de détail pour tous les blogposts
-- Générer une page about avec les members de l'équipe
+- Générer une page about avec les membres de l'équipe
 - Générer une navigation (home, blog, about) avec un fichier data. la navigation doit mettre en évidence la section en cours.

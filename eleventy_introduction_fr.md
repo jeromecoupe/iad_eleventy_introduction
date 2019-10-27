@@ -103,7 +103,7 @@ Eleventy va maintenant copier ce dossier ainsi que tout ce qu'il contient.
 
 Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre éventuel fichier `.gitignore`.
 
-Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possoble, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
+Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possible, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
 
 **.eleventyignore**
 ```txt

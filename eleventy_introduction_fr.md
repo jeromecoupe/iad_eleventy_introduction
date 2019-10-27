@@ -144,7 +144,7 @@ src/assets/scss/
 src/assets/js/
 ```
 
-De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers requis dans votre dossier `./dist/`.
+De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`.
 
 Personellement, j'utilise Gulp en combinaison avec Webpack dans la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
 

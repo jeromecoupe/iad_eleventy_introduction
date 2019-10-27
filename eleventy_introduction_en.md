@@ -144,7 +144,7 @@ src/assets/scss/
 src/assets/js/
 ```
 
-Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist` directory.
+Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist/` directory.
 
 Personally, I use Gulp combined with Webpack for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
 

@@ -211,7 +211,7 @@ Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de le
 
 Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `.eleventy.js`.
 
-Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichiers correspondants à un même glob pattern.
+Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichiers correspondant à un même glob pattern.
 
 Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `.eleventy.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
 

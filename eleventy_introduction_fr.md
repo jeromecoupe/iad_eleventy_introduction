@@ -113,7 +113,7 @@ dist/
 
 ### Assets pipeline et outils de build
 
-Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer Eleventy à un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
+Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer à Eleventy un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
 
 Lorsque vous commencez à utiliser des outils de build pour vos assets, vous devrez modifier votre configuration de `addPassthroughCopy` et probablement ignorer les dossiers d'assets qui ne dépendent plus d'Eleventy puisque ce sont alors vos outils et scripts de build qui vont les générer dans votre dossier `dist`.
 

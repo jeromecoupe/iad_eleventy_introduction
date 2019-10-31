@@ -719,9 +719,9 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
           </a>
         </article>
       </li>
-    {% else %}
-      <p>No blogpost found</p>
     {% if loop.last %}</ul>{% endif %}
+  {% else %}
+    <p>No blogpost found</p>
   {% endfor %}
 
   {# pagination #}

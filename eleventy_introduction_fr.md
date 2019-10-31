@@ -727,7 +727,7 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
   {# pagination #}
   {% set totalPages = pagination.hrefs | length %}
   {% set currentPage = pagination.pageNumber + 1 %}
-  {% if totalPages > 0 %}
+  {% if totalPages > 1 %}
     <ul class="c-pagination">
       {% if pagination.previousPageHref %}<li class="c-pagination__item  c-pagination__item--first"><a class="c-pagination__link" href="{{ pagination.firstPageHref }}">First</a></li>{% endif %}
       {% if currentPage > 1 %}<li class="c-pagination__item"><a class="c-pagination__link" href="{{ pagination.hrefs[pagination.pageNumber - 1] }}">{{ currentPage - 1 }}</a></li>{% endif %}

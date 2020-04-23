@@ -244,7 +244,7 @@ module.exports = function(eleventyConfig) {
 
 Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacré au templating.
 
-Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est-à-dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `colections.all`.
+Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est-à-dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `collections.all`.
 
 Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées:
 

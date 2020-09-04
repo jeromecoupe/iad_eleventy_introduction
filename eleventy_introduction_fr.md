@@ -56,8 +56,9 @@ Nous allons commencer par créer une architecture de projet et configurer Eleven
 Commençons par spécifier les dossiers source et de destination pour Eleventy:
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // override default config
   return {
     dir: {
@@ -82,8 +83,9 @@ Nous pouvons également utiliser ce fichier de configuration pour demander à El
 Modifier le fichier `.eleventy.js` comme suit:
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/");
 
@@ -97,7 +99,7 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-Eleventy va maintenant copier ce dossier ainsi que tout ce qu'il contient.
+Eleventy va maintenant copier le dossier `./src/assets/` ainsi que tout ce qu'il contient vers `./dist/assets/` en préservant la structure des dossiers enfants.
 
 ### Ignorer certains dossiers et fichiers
 
@@ -106,6 +108,7 @@ Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossier
 Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possible, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
 
 **.eleventyignore**
+
 ```txt
 node_modules/
 dist/
@@ -120,8 +123,9 @@ Lorsque vous commencez à utiliser des outils de build pour vos assets, vous dev
 A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass et compile votre JavaScript avec Webpack par exemple, il suffit de faire les modifications suivantes:
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
@@ -137,6 +141,7 @@ module.exports = function(eleventyConfig) {
 ```
 
 **.eleventyignore**
+
 ```txt
 node_modules/
 dist/
@@ -169,7 +174,8 @@ La partie en Markdown représente le contenu principal de vos données et est g�
 
 Si vous devez construire un blog, vos blogposts seront représentés par des fichiers Markdown avec un YAML front matter qui pourrait ressembler à ceci:
 
-**./src/blog/2019-07-22-markdown-yaml-front-matter.md**
+**`./src/blog/2019-07-22-markdown-yaml-front-matter.md`**
+
 ```md
 ---
 title: "This is the title"
@@ -179,9 +185,9 @@ imageMedium: "testimage_1024.jpg"
 imageBig: "testimage_1500.jpg"
 imageAlt: "Alternative text for picture"
 categories:
-- front-end
-- JAMstack
-- Eleventy
+  - front-end
+  - Jamstack
+  - Eleventy
 ---
 
 ## Level 2 title
@@ -191,7 +197,8 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibu
 
 Chaque membre de l'équipe éditoriale pourrait être représenté par un fichier ayant la structure suivante:
 
-**./src/projects/jerome-coupe.md**
+**`./src/projects/jerome-coupe.md`**
+
 ```md
 ---
 name: "Jérôme"
@@ -216,18 +223,18 @@ Cette API vous offre [différentes méthodes pour déclarer des collections](htt
 Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `.eleventy.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // blogposts collection
-  eleventyConfig.addCollection("blogposts", function(collection) {
+  eleventyConfig.addCollection("blogposts", function (collection) {
     return collection.getFilteredByGlob("./src/blog/*.md");
   });
 
   // team collection
-  eleventyConfig.addCollection("team", function(collection) {
+  eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md");
   });
-
 
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/");
@@ -267,14 +274,12 @@ Si un classement par date correspond à ce que vous souhaitez, vous pouvez éven
 
 Si vous souhaitez classer alphabétiquement les membres de votre équipe sur base de la clef `surname`, le code suivant classerait ces membres de l'équipe par ordre ascendant :
 
-
 ```js
-module.exports = function(eleventyConfig) {
-
+module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   // Team collection
-  eleventyConfig.addCollection("team", function(collection) {
+  eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
       let nameA = a.data.surname.toUpperCase();
       let nameB = b.data.surname.toUpperCase();
@@ -310,8 +315,7 @@ Outre les collections, l'autre grande source de données pour Eleventy sont les 
 Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `.eleventy.js`.
 
 ```js
-module.exports = function(eleventyConfig) {
-
+module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   // override default config
@@ -329,7 +333,8 @@ module.exports = function(eleventyConfig) {
 
 Les fichiers de données statiques sont simplement des fichiers JSON ou JS contenant des paires clé / valeur.
 
-**./src/_data/site.js**
+**`./src/_data/site.js`**
+
 ```js
 module.exports = {
   title: "Title of the site",
@@ -394,7 +399,8 @@ Plutôt que de spécifier une valeur YAML front matter identique dans tous les f
 
 Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blog/blog.json`, `.src/blog/blog.11data.json` ou `.src/blog/blog.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
 
-**./src/blog/blog.json** ou **./src/blog/blog.11tydata.json**
+**`./src/blog/blog.json`** ou **`./src/blog/blog.11tydata.json`**
+
 ```json
 {
   "layout": "layouts/blogpost.njk",
@@ -402,7 +408,8 @@ Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` ide
 }
 ```
 
-**./src/blog/blog.11tydata.js**
+**`./src/blog/blog.11tydata.js`**
+
 ```js
 module.exports = {
   layout: "layouts/blogpost.njk",
@@ -455,8 +462,7 @@ Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les date
 // required packages
 const moment = require("moment");
 
-module.exports = function(eleventyConfig) {
-
+module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   /**
@@ -464,7 +470,7 @@ module.exports = function(eleventyConfig) {
    * @param {Date} date
    * @param {string} format - moment.js date formatting string
    */
-  eleventyConfig.addFilter("date", function(date, format) {
+  eleventyConfig.addFilter("date", function (date, format) {
     return moment(date).format(format);
   });
 };
@@ -504,6 +510,12 @@ Nunjucks permet d'utiliser les structures de contrôle traditionelles telles que
 {% endif %}
 ```
 
+```njk
+{% if collections.blogposts | length >= 2 %}
+  <p>There is at least two blogposts in this collection</p>
+{% endif %}
+```
+
 ##### Boucle `for`
 
 Lorsque vous devrez afficher des données, qu'elles proviennent d'API ou de fichiers Markdown, vous devrez parcourir des tableaux ou des dictionnaires avec des boucles `for`. Voici par exemple comment afficher dans une liste les titres et introduction de tous vos blogposts.
@@ -531,8 +543,9 @@ En plus d'un tag `{% include %}`, Nunjucks utilise l'héritage de template comme
 Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuration `.eleventy.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // override default config
   return {
     dir: {
@@ -552,7 +565,8 @@ Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 
 #### Layouts
 
-**./src/_includes/layouts/base.njk**
+**`./src/_includes/layouts/base.njk`**
+
 ```njk
 <!DOCTYPE html>
 <html lang="en">
@@ -593,7 +607,8 @@ Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 
 Voici un exemple simple de fichier inclus utilisé pour le footer.
 
-**./src/_includes/partials/sitefooter.njk**
+**`./src/_includes/partials/sitefooter.njk`**
+
 ```njk
 <div class="c-sitefooter">
   <p>&copy; {{ site.buildTime | date("Y") }} - La casa productions</p>
@@ -602,7 +617,8 @@ Voici un exemple simple de fichier inclus utilisé pour le footer.
 
 Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va venir étendre notre layout de base. Ce layout de blogpost va être utilisé par tous les fichiers Markdown de notre collection pour générer les pages de détail.
 
-**./src/_includes/layouts/blogpost.njk**
+**`./src/_includes/layouts/blogpost.njk`**
+
 ```njk
 {% extends "layouts/base.njk" %}
 
@@ -650,7 +666,8 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
 
 Voici un exemple de template pour la page about. Ce template étend notre layout de base et définit une série de variables qui y seront accessibles.
 
-**./src/pages/about.njk**
+**`./src/pages/about.njk`**
+
 ```njk
 ---
 permalink: /about/index.html
@@ -692,7 +709,8 @@ permalink: /about/index.html
 
 Pour la page d'archive de notre blog, nous allons utiliser la fonction de [pagination](https://www.11ty.io/docs/pagination/). Celle-ci fonctionne en spécifiant quelles sont les données à paginer (`data`), combien d'éléments doivent être affichés par page (`size`) et quel `alias` doit être utilisé pour les données une fois paginées.
 
-**./src/pages/blog.njk**
+**`./src/pages/blog.njk`**
+
 ```njk
 ---
 pagination:

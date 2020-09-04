@@ -56,8 +56,9 @@ We will make a basic project architecture and configure Eleventy by creating a `
 Let's start by specifying source and destination directories for Eleventy:
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // override default config
   return {
     dir: {
@@ -82,8 +83,9 @@ We also can use this configuration file to tell Eleventy to copy any file or fol
 Let's modify our `.eleventy.js` file as follows:
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/");
 
@@ -106,6 +108,7 @@ By default, Eleventy will ignore the `node_modules` directory as well as the fol
 We can also create a `.eleventyignore` file at the root of our project and specify a file, directory or glob pattern per line to explicitly tell Eleventy to ignore all matching files and directories. I have painfully learned that you always want to be as explicit as possible, and that's true for many other things than code, actually. Let's do this.
 
 **.eleventyignore**
+
 ```txt
 node_modules/
 dist/
@@ -120,8 +123,9 @@ When you start using build tools to create an assets pipeline, you will likely h
 If, for example, you are using NPM scripts to build your CSS from Sass files or if you use Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
@@ -137,6 +141,7 @@ module.exports = function(eleventyConfig) {
 ```
 
 **.eleventyignore**
+
 ```txt
 node_modules/
 dist/
@@ -170,7 +175,8 @@ The Markdown part of the file generally represents the main content of your data
 
 If you want to build a blog, your blogposts are going to be represented by Markdown files with a YAML front matter that could look something like the following:
 
-**./src/blog/2019-07-22-markdown-yaml-front-matter.md**
+**`./src/blog/2019-07-22-markdown-yaml-front-matter.md`**
+
 ```md
 ---
 title: "This is the title"
@@ -180,9 +186,9 @@ imageMedium: "testimage_1024.jpg"
 imageBig: "testimage_1500.jpg"
 imageAlt: "Alternative text for picture"
 categories:
-- front-end
-- JAMstack
-- Eleventy
+  - front-end
+  - Jamstack
+  - Eleventy
 ---
 
 ## Level 2 title
@@ -192,7 +198,8 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibu
 
 Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
 
-**./src/projects/jerome-coupe.md**
+**`./src/projects/jerome-coupe.md`**
+
 ```md
 ---
 name: "Jérôme"
@@ -217,14 +224,14 @@ This API offers you [different methods to declare your collections](https://www.
 If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quite easy. You have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
 
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // blogposts collection
-  eleventyConfig.addCollection("blogposts", function(collection) {
+  eleventyConfig.addCollection("blogposts", function (collection) {
     return collection.getFilteredByGlob("./src/blog/*.md");
   });
 
   // team collection
-  eleventyConfig.addCollection("team", function(collection) {
+  eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md");
   });
 
@@ -267,12 +274,11 @@ If what you need is to sort your collection items by date, you are covered. You 
 By contrast, if you need to sort your team members alphabetically using the value of their `surname` key, you will need to use the JavaScript `sort` method.
 
 ```js
-module.exports = function(eleventyConfig) {
-
+module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   // Team collection
-  eleventyConfig.addCollection("team", function(collection) {
+  eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
       let nameA = a.data.surname.toUpperCase();
       let nameB = b.data.surname.toUpperCase();
@@ -308,8 +314,7 @@ Aside from collections, the other data source you can use with Eleventy are data
 By default, these files have to be stored in the `./src/_data/` directory. This can be modified using the `.eleventy.js` configuration file.
 
 ```js
-module.exports = function(eleventyConfig) {
-
+module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   // override default config
@@ -327,7 +332,8 @@ module.exports = function(eleventyConfig) {
 
 Static data files are JSON or JS files containing key/value pairs.
 
-**./src/_data/site.js**
+**`./src/_data/site.js`**
+
 ```js
 module.exports = {
   title: "Title of the site",
@@ -392,7 +398,8 @@ Instead of having to specify the same YAML front matter key / value pair for a b
 
 If you want to specify the same key/value pair for `permalink` and `layout` for all of your blogposts, you can add a `./src/blog/blog.json`, `./src/blog/blog.11data.json` or `./src/blog/blog.11data.js` directory data file in the `./src/blog` directory and specify them there. Eleventy will apply those values to all the files in that directory or in its subdirectories.
 
-**./src/blog/blog.json** or **./src/blog/blog.11tydata.json**
+**`./src/blog/blog.json`** or **`./src/blog/blog.11tydata.json`**
+
 ```json
 {
   "layout": "layouts/blogpost.njk",
@@ -400,7 +407,8 @@ If you want to specify the same key/value pair for `permalink` and `layout` for 
 }
 ```
 
-**./src/blog/blog.11tydata.js**
+**`./src/blog/blog.11tydata.js`**
+
 ```js
 module.exports = {
   layout: "layouts/blogpost.njk",
@@ -453,8 +461,7 @@ For example, Nunjucks does not have a built-in date formatting filter. We can ea
 // required packages
 const moment = require("moment");
 
-module.exports = function(eleventyConfig) {
-
+module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   /**
@@ -462,7 +469,7 @@ module.exports = function(eleventyConfig) {
    * @param {Date} date
    * @param {string} format - moment.js date formatting string
    */
-  eleventyConfig.addFilter("date", function(date, format) {
+  eleventyConfig.addFilter("date", function (date, format) {
     return moment(date).format(format);
   });
 };
@@ -502,6 +509,12 @@ Nunjucks will allow you to use traditional control structures like `if` and `els
 {% endif %}
 ```
 
+```njk
+{% if collections.blogposts | length >= 2 %}
+  <p>There is at least two blogposts in this collection</p>
+{% endif %}
+```
+
 ##### `for` loop
 
 When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or objects using `for` loops. Let's display title and introductions for all our blogposts in an HTML list.
@@ -529,8 +542,9 @@ On top of offering you an `{% include %}` tag, Nunjucks uses template inheritanc
 Includes as well as template inheritance can be used with Eleventy. The only quirk is that templates to extend as well as template to include must all be located in the includes directory specified in your `.eleventy.js` configuration file. By default, this directory is `_includes` and the path you specify in your config file is relative to your source directory.
 
 **.eleventy.js**
+
 ```js
-module.exports = function(eleventyConfig) {
+module.exports = function (eleventyConfig) {
   // override default config
   return {
     dir: {
@@ -552,7 +566,8 @@ Let's come back to our project and create the templates we need using everything
 
 #### Layouts
 
-**./src/_includes/layouts/base.njk**
+**`./src/_includes/layouts/base.njk`**
+
 ```njk
 <!DOCTYPE html>
 <html lang="en">
@@ -593,7 +608,8 @@ Let's come back to our project and create the templates we need using everything
 
 Here is an included file for the footer
 
-**./src/_includes/partials/sitefooter.njk**
+**`./src/_includes/partials/sitefooter.njk`**
+
 ```njk
 <div class="c-sitefooter">
   <p>&copy; {{ site.buildTime | date("Y") }} - La casa productions</p>
@@ -602,7 +618,8 @@ Here is an included file for the footer
 
 As far as blogposts go, we need a special layout which will extend our base layout. This blogpost layout will be used by all the Markdown files in our collection to generate detail pages. This layout is the one specified for all our blogposts using a directory data file (see above).
 
-**./src/_includes/layouts/blogpost.njk**
+**`./src/_includes/layouts/blogpost.njk`**
+
 ```njk
 {% extends "layouts/base.njk" %}
 
@@ -650,7 +667,8 @@ As far as blogposts go, we need a special layout which will extend our base layo
 
 Here is an example of template for the about page, where will will display a list of our team members. It extends our base layout and sets several variables that will be available in the base layout.
 
-**./src/pages/about.njk**
+**`./src/pages/about.njk`**
+
 ```njk
 ---
 permalink: /about/index.html
@@ -692,7 +710,8 @@ permalink: /about/index.html
 
 For the archive page of our blog, we will use the [pagination](https://www.11ty.io/docs/pagination/) provided by Eleventy. Pagination specifies what `data` must be paginated (this can be any iterable), how many items must be displayed per page with `size` and which `alias` must be used for the paginated data.
 
-**./src/pages/blog.njk**
+**`./src/pages/blog.njk`**
+
 ```njk
 ---
 pagination:
@@ -746,7 +765,8 @@ The pagination function in Eleventy is much more powerful than it seems at first
 
 Here is a simplified template we could use:
 
-**./src/pages/blogpost_entry.njk**
+**`./src/pages/blogpost_entry.njk`**
+
 ```njk
 ---
 pagination:

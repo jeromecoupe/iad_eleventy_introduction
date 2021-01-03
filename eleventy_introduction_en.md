@@ -193,8 +193,10 @@ categories:
 
 ## Level 2 title
 
-Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
+This is some content for this blogpost.
 ```
+
+Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
 
 `file: ./src/projects/jerome-coupe.md`
 

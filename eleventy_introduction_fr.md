@@ -49,7 +49,7 @@ Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
 
 Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `.eleventy.js`:
 
-- Supprimer le dossier de destination `./site` créé par Eleventy
+- Supprimer le dossier de destination `./_site` créé par Eleventy
 - Créer un dossier `./src` et y placer notre fichier `index.html`
 - Créer un fichier `.eleventy.js` dans la racine de notre projet
 
@@ -116,7 +116,7 @@ dist/
 
 ### Assets pipeline et outils de build
 
-Eleventy ne possède pas d'assets pipeline ou d'outil de build par défaut. Il est donc intéressant d'intégrer à Eleventy un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
+Eleventy ne possède pas d'[asset pipeline](https://mxb.dev/blog/eleventy-asset-pipeline/) ou d'outil de build par défaut. Il est donc intéressant d'intégrer à Eleventy un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
 
 Lorsque vous commencez à utiliser des outils de build pour vos assets, vous devrez modifier votre configuration de `addPassthroughCopy` et probablement ignorer les dossiers d'assets qui ne dépendent plus d'Eleventy puisque ce sont alors vos outils et scripts de build qui vont les générer dans votre dossier `dist`.
 
@@ -151,7 +151,7 @@ src/assets/js/
 
 De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`.
 
-Personellement, j'utilise Gulp en combinaison avec Webpack dans la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
+Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/) ou [Webpack](https://webpack.js.org/) pour la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
 
 ## 3. Définir et structurer vos données
 
@@ -160,7 +160,7 @@ Eleventy permet de travailler avec deux grandes sources de données:
 1. **des fichiers Markdown** (pour le contenu principal) et YAML front matter (pour le reste de la structure de données) qui peuvent être facilement convertis en collections.
 2. **des fichiers JSON et/ou JS** qui peuvent soit être statiques soit dynamiques (provenant d'une API).
 
-Ces deux sources de données ne sont pas mutuellement exclusives et sont généralement utilisées simultanément dans tout projet. Voyons cela plus en détail.
+Ces deux sources de données ne sont pas mutuellement exclusives et sont généralement utilisées simultanément dans le cadre de projets. Voyons cela plus en détail.
 
 ### Collections
 
@@ -251,12 +251,12 @@ module.exports = function (eleventyConfig) {
 
 Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacré au templating.
 
-Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos élements de contenus, c'est-à-dire tous les fichiers gérés par Eleventy. Cette collection spéciale est adressable via `collections.all`.
+Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos éléments de contenus, c'est-à-dire tous les fichiers gérés par Eleventy. Cette collection spéciale est accessible via `collections.all`.
 
 Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées:
 
 - `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy).
-- `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.io/docs/data/#fileslug).
+- `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.dev/docs/data-eleventy-supplied/).
 - `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu.
 - `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la clef `permalink`
 - `date`: la date utilisée pour le classement. Pour en savoir plus sur les [dates des éléments de contenus](https://www.11ty.io/docs/dates/), référez-vous à la documentation.
@@ -281,11 +281,7 @@ module.exports = function (eleventyConfig) {
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
-      let nameA = a.data.surname.toUpperCase();
-      let nameB = b.data.surname.toUpperCase();
-      if (nameA < nameB) return -1;
-      if (nameA > nameB) return 1;
-      return 0;
+      return a.data.surname.localeCompare(b.data.surname);
     });
   });
 };
@@ -352,11 +348,11 @@ Les données sont accessibles dans vos templates à l'aide du nom de fichier uti
 
 #### Fichiers data dynamiques
 
-Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne vous empèche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
+Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne vous empêche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
 
 A chaque fois que votre site est généré, Eleventy exécutera ce script et traitera le JSON retourné par l'API comme un fichier de données statique pour générer vos pages.
 
-### Permaliens et URLs
+### Permalinks et URLs
 
 Par défaut, Eleventy utilise votre structure de dossiers et vos fichiers et dans votre répertoire source pour générer des fichiers statiques dans votre dossier de sortie.
 
@@ -494,9 +490,9 @@ Le code ci-dessous va assigner tous les blogposts de la collection à une variab
 {% set blogposts = collections.blogposts | reverse %}
 ```
 
-##### Structures de contôle
+##### Structures de contrôle
 
-Nunjucks permet d'utiliser les structures de contrôle traditionelles telles que `if` et `else`, les opérateurs de comparaison tels que `===`, `!==`, `>`, etc. ainsi que les opérateurs logique comme `and`, `or` et `not`.
+Nunjucks permet d'utiliser les structures de contrôle traditionnelles telles que `if` et `else`, les opérateurs de comparaison tels que `===`, `!==`, `>`, etc. ainsi que les opérateurs logique comme `and`, `or` et `not`.
 
 ```njk
 {% if collections.blogposts | length %}

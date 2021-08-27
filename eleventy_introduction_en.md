@@ -2,11 +2,11 @@
 
 ## 1. Introduction
 
-[Eleventy](https://www.11ty.io) is a Static Site Genertor created and maintained by [Zach Leatherman](https://www.zachleat.com/). Eleventy allows you to develop websites based on templates and data or content files (YAML / Markdown / HTML / JSON / JS) in a source directory. Based on those source files, Eleventy will generate a fully functional static site in a destination folder. You will then be able to deploy that site on any web server capable of serving static files.
+[Eleventy](https://www.11ty.io) is a Static Site Generator created and maintained by [Zach Leatherman](https://www.zachleat.com/). Eleventy allows you to develop websites based on templates and data or content files (YAML / Markdown / HTML / JSON / JS) in a source directory. Based on those source files, Eleventy will generate a fully functional static site in a destination folder. You will then be able to deploy that site on any web server capable of serving static files.
 
 The [stated goal of Eleventy](https://www.11ty.io/docs/) is to be an alternative to [Jekyll](https://jekyllrb.com/), written in Node rather than in Ruby. Like Jekyll, 11ty is a very approachable and simple SSG to use, once the basic principles are well understood.
 
-Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, 11ty allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favourite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
+Node being quite fast, Eleventy is a performant SSG. It is also very flexible. Since it is written in Node, 11ty allows you to use the NPM ecosystem to extend its functionalities. You can also pick your favorite in a [long list of templating languages](https://www.11ty.io/docs/languages/). In this course we will use [Nunjucks](https://mozilla.github.io/nunjucks/) by [Mozilla](https://www.mozilla.org) for all code samples.
 
 ## 2. Installation and configuration
 
@@ -49,7 +49,7 @@ Let's configure Eleventy to better suit our needs.
 
 We will make a basic project architecture and configure Eleventy by creating a `.eleventy.js` configuration file at the root of our project.
 
-- Remove Eleventy's default destination `./site` folder.
+- Remove Eleventy's default destination `./_site` folder.
 - Create a `./src` folder and move `index.html` into it.
 - Create an `.eleventy.js` file at the root of the project.
 
@@ -116,7 +116,7 @@ dist/
 
 ### Assets pipeline and build tools
 
-Eleventy doesn't offer an asset pipeline or a build tool by default. I always almost use Eleventy with build tools, whether with NPM scripts, Gulp, Webpack or any other alternatives.
+Eleventy doesn't offer an [asset pipeline](https://mxb.dev/blog/eleventy-asset-pipeline/) or a build tool by default. I always almost use Eleventy with build tools, whether with NPM scripts, Gulp, Webpack or any other alternatives.
 
 When you start using build tools to create an assets pipeline, you will likely have to modify your `addPassthroughCopy` and ignore assets directories that will not need to be handled by Eleventy because your build tools and scripts will take care of them and generate what you need in your `./dist` directory.
 
@@ -151,7 +151,7 @@ src/assets/js/
 
 Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist/` directory.
 
-Personally, I use Gulp combined with Webpack for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
+Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/) or [Webpack](https://webpack.js.org/) for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
 
 ## 3. Define and structure your data
 
@@ -160,8 +160,7 @@ Eleventy allows you to work with two data sources:
 1. **Markdown files** (for the main content) and YAML front matter (for the rest of the data structure) that can easily be turned into collections (more on that later).
 2. **JSON and/or JS data files** that can either be static or dynamic (fetched from an API).
 
-These two types of data sources are not mutually exclusive and are, in fact, used simultaneously in most projects.
-Let's dive in.
+These two types of data sources are not mutually exclusive. They are often used simultaneously in most projects. Let's dive in.
 
 ### Collections
 
@@ -169,7 +168,7 @@ Collections in Eleventy allow you to group content items in interesting ways and
 
 #### Markdown and YAML front matter
 
-Markdown files coupled with a YAML front matter allow you to use text files as structured data sources. It's a staple feature of most SSG out there.
+Markdown files coupled with a YAML front matter allow you to use text files as structured data sources. It's a common feature of most SSG out there.
 
 The Markdown part of the file generally represents the main content of your data and is generally converted to HTML. The YAML front matter allows you to create a data structure with different types of data (strings, arrays, objects, etc.).
 
@@ -193,8 +192,10 @@ categories:
 
 ## Level 2 title
 
-Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
+Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibus reiciendis dignissimos accusantium illo, voluptates consequuntur fugit amet quo sed nisi facere animi incidunt assumenda exercitationem, nam omnis perspiciatis praesentium.
 ```
+
+Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
 
 `file: ./src/projects/jerome-coupe.md`
 
@@ -213,7 +214,7 @@ Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgiu
 
 #### Collection API
 
-For Eleventy to group those files in an array that will allow you to manipulate it in your templates, you have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
+For Eleventy to group those files in an array that will allow you to wok with it in your templates, you have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
 
 To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `.eleventy.js` file.
 
@@ -246,14 +247,14 @@ module.exports = function (eleventyConfig) {
 };
 ```
 
-You can now access your collections using `collections.blogposts` and `collections.team` in your templates. We will come back to them when we get to templating.
+You can now access your collections using `collections.blogposts` and `collections.team` in your templates. We will come back to that when we get to templating.
 
 It is also important to know that, by default, Eleventy creates a collection that contains all your content items. This special collection can be accessed in your templates by using `collections.all`.
 
 When a collection is created, the following keys are automatically created:
 
 - `inputPath`: the full path to the source input file (including the path to the input directory).
-- `fileSlug`: Mapped from the input file name, useful for permalinks. Read more about [`fileslug`](https://www.11ty.io/docs/data/#fileslug).
+- `fileSlug`: Mapped from the input file name, useful for permalinks. Read more about [`fileslug`](https://www.11ty.dev/docs/data-eleventy-supplied/).
 - `outputPath`: the full path to the output file to be written for this content.
 - `url`: url used to link to this piece of content. In general, this is based on the `permalink` key defined for your content items.
 - `date`: the resolved date used for sorting. Read more about [Content Dates](https://www.11ty.io/docs/dates/) in the documentation.
@@ -278,11 +279,7 @@ module.exports = function (eleventyConfig) {
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
-      let nameA = a.data.surname.toUpperCase();
-      let nameB = b.data.surname.toUpperCase();
-      if (nameA < nameB) return -1;
-      if (nameA > nameB) return 1;
-      return 0;
+      return a.data.surname.localeCompare(b.data.surname);
     });
   });
 };
@@ -361,7 +358,7 @@ By default, Eleventy will use the folders and files structure in your source dir
 - `./src/test.html` will generate `./dist/test/index.html` with `/test/` as the URL.
 - `./src/subdir/index.html` will generate `./dist/subdir/index.html` with `/subdir/` as the URL.
 
-This default behaviour can be changed by using a static or dynamic `permalink` variable in your content files or in your templates.
+This default behavior can be changed by using a static or dynamic `permalink` variable in your content files or in your templates.
 
 For example, to create a blog, you will need an index page at the following URL `/blog/index.html`. Your Nunjucks template `./src/pages/blog.njk` should have that as the value of the `permalink` key in its YAML front matter.
 

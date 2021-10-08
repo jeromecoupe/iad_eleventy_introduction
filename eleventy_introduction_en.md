@@ -192,7 +192,7 @@ categories:
 
 ## Level 2 title
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibus reiciendis dignissimos accusantium illo, voluptates consequuntur fugit amet quo sed nisi facere animi incidunt assumenda exercitationem, nam omnis perspiciatis praesentium.
+This is some content for this blogpost.
 ```
 
 Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:

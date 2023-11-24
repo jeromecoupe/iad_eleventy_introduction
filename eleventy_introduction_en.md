@@ -47,15 +47,15 @@ Let's configure Eleventy to better suit our needs.
 
 ### Configuration
 
-We will make a basic project architecture and configure Eleventy by creating a `.eleventy.js` configuration file at the root of our project.
+We will make a basic project architecture and configure Eleventy by creating an `eleventy.config.js` configuration file at the root of our project.
 
 - Remove Eleventy's default destination `./_site` folder.
 - Create a `./src` folder and move `index.html` into it.
-- Create an `.eleventy.js` file at the root of the project.
+- Create an `eleventy.config.js` or `.eleventy.js` file at the root of the project.
 
 Let's start by specifying source and destination directories for Eleventy:
 
-`file: .eleventy.js`
+`file: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -80,9 +80,9 @@ We also can use this configuration file to tell Eleventy to copy any file or fol
 - Create a `./src/assets/js/` directory and drop a JavaScript file in there.
 - Create a `./src/assets/css/` directory and drop a CSS file in there.
 
-Let's modify our `.eleventy.js` file as follows:
+Let's modify our `eleventy.config.js` file as follows:
 
-`file: .eleventy.js`
+`file: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -122,7 +122,7 @@ When you start using build tools to create an assets pipeline, you will likely h
 
 If, for example, you are using NPM scripts to build your CSS from Sass files or if you use esbuild or Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
 
-`file: .eleventy.js`
+`file: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -221,11 +221,11 @@ Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgiu
 
 For Eleventy to group those files in an array that will allow you to wok with it in your templates, you have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
 
-To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `.eleventy.js` file.
+To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `eleventy.config.js` file.
 
 This API offers you [different methods to declare your collections](https://www.11ty.io/docs/collections/#collection-api-methods) that each have their use. My favourite and most used one by far is `getFilteredByGlob(glob)` that allows you create a collection from all files matching a defined glob pattern.
 
-If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quite easy. You have to add the following code to your `.eleventy.js` configuration file. While we are at it, we will also add our `team` collection.
+If all your Markdown files for your blogposts are in a `./src/blog/` directory, grouping them into a collection is quite easy. You have to add the following code to your `eleventy.config.js` configuration file. While we are at it, we will also add our `team` collection.
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -311,7 +311,7 @@ module.exports = function(eleventyConfig) {
 
 Aside from collections, the other data source you can use with Eleventy are data files. Those can be static or dynamic (fetched from an API).
 
-By default, these files have to be stored in the `./src/_data/` directory. This can be modified using the `.eleventy.js` configuration file.
+By default, these files have to be stored in the `./src/_data/` directory. This can be modified using the `eleventy.config.js` configuration file.
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -453,7 +453,7 @@ Filters are essentially devoted to manipulate strings, numbers, booleans, arrays
 
 ##### Custom filters in Eleventy
 
-Eleventy allows you to create your own filters using JavaScript and the `.eleventy.js` configuration file. these filters can then be used in most templating languages you choose to use.
+Eleventy allows you to create your own filters using JavaScript and the `eleventy.config.js` configuration file. these filters can then be used in most templating languages you choose to use.
 
 For example, Nunjucks does not have a built-in date formatting filter. We can easily create one in Eleventy using the popular [`moment.js`](https://momentjs.com/) library.
 
@@ -539,9 +539,9 @@ You will notice that we can use `loop.first` and `loop.last` to only spit out th
 
 On top of offering you an `{% include %}` tag, Nunjucks uses template inheritance as its layout model with `{% extends %}`. This allows you to define blocks with `{% block blockname %}` in a template and then to override the content of those blocks with child templates that extends the parent one. These chains of templates can be as long as you wish.
 
-Includes as well as template inheritance can be used with Eleventy. The only quirk is that templates to extend as well as template to include must all be located in the includes directory specified in your `.eleventy.js` configuration file. By default, this directory is `_includes` and the path you specify in your config file is relative to your source directory.
+Includes as well as template inheritance can be used with Eleventy. The only quirk is that templates to extend as well as template to include must all be located in the includes directory specified in your `eleventy.config.js` configuration file. By default, this directory is `_includes` and the path you specify in your config file is relative to your source directory.
 
-`file: .eleventy.js`
+`file: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {

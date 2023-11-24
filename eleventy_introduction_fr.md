@@ -47,15 +47,15 @@ Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
 
 ### Configuration
 
-Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `.eleventy.js`:
+Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `eleventy.config.js`:
 
 - Supprimer le dossier de destination `./_site` créé par Eleventy
 - Créer un dossier `./src` et y placer notre fichier `index.html`
-- Créer un fichier `.eleventy.js` dans la racine de notre projet
+- Créer un fichier `eleventy.config.js` ou `.eleventy.js` dans la racine de notre projet
 
 Commençons par spécifier les dossiers source et de destination pour Eleventy:
 
-`fichier: .eleventy.js`
+`fichier: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -80,9 +80,9 @@ Nous pouvons également utiliser ce fichier de configuration pour demander à El
 - créer un dossier `./src/assets/js/` et y placer un fichier JavaScript
 - créer un dossier `./src/assets/css/` et y placer un fichier CSS
 
-Modifier le fichier `.eleventy.js` comme suit:
+Modifier le fichier `eleventy.config.js` comme suit:
 
-`fichier: .eleventy.js`
+`fichier: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -122,7 +122,7 @@ Lorsque vous commencez à utiliser des outils de build pour vos assets, vous dev
 
 A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass et compile votre JavaScript avec Webpack par exemple, il faudra faire les modifications suivantes:
 
-`fichier: .eleventy.js`
+`fichier: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -221,13 +221,13 @@ Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgiu
 
 Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou plusieurs collections.
 
-Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `.eleventy.js`.
+Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `eleventy.config.js`.
 
 Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichiers correspondant à un même glob pattern.
 
-Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `.eleventy.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
+Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `eleventy.config.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
 
-`fichier: .eleventy.js`
+`fichier: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -313,7 +313,7 @@ module.exports = function(eleventyConfig) {
 
 Outre les collections, l'autre grande source de données pour Eleventy sont les fichiers de données (data files). Ceux-ci peuvent être statiques ou dynamiques.
 
-Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `.eleventy.js`.
+Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `eleventy.config.js`.
 
 ```js
 module.exports = function (eleventyConfig) {
@@ -455,7 +455,7 @@ Les filtres sont essentiellement destinés à manipuler des chaînes de caractè
 
 ##### Filtres personnalisés dans Eleventy
 
-Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `.eleventy.js`. Ces filtres peuvent ensuite être utilisés dans le language de templating que vous aurez choisi.
+Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `eleventy.config.js`. Ces filtres peuvent ensuite être utilisés dans le language de templating que vous aurez choisi.
 
 Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement un dans Eleventy à l'aide de la librairie [`moment.js`](https://momentjs.com/).
 
@@ -541,9 +541,9 @@ Notez que nous pouvons utiliser `loop.first` et `loop.last` pour seulement affic
 
 En plus d'un tag `{% include %}`, Nunjucks utilise l'héritage de template comme modèle de layout avec `{% extends %}`. Ce modèle permet de définir des blocks dans un template que les templates enfants vont venir surdéterminer. Les chaînes de templates peuvent être aussi longues que souhaitées.
 
-Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuration `.eleventy.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
+Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuration `eleventy.config.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
 
-`fichier: .eleventy.js`
+`fichier: eleventy.config.js`
 
 ```js
 module.exports = function (eleventyConfig) {

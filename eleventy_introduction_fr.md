@@ -38,7 +38,7 @@ Eleventy va simplement s'installer dans un dossier `node_modules`. Pour pouvoir 
 Une fois ce fichier créé, nous pouvons tester les commandes principales d'Eleventy:
 
 - `npx eleventy`: pour faire tourner Eleventy
-- `npx eleventy --serve`: pour faire tourner Browsersync afin d'avoir un serveur web local qui va recharger le site dans votre navigateur dès que le site change
+- `npx eleventy --serve`: pour faire tourner un serveur web local qui va recharger le site dans votre navigateur dès que le site change
 - `npx eleventy --help`: pour avoir la liste des commandes existantes
 
 Vous connaissez maintenant les commandes de base, nécessaires pour commencer à travailler. Si vous tapez `npx eleventy`, Eleventy devrait créer pour vous un dossier `_site` et y placer une copie de votre fichier `index.html`.
@@ -120,7 +120,7 @@ Eleventy ne possède pas d'[asset pipeline](https://mxb.dev/blog/eleventy-asset-
 
 Lorsque vous commencez à utiliser des outils de build pour vos assets, vous devrez modifier votre configuration de `addPassthroughCopy` et probablement ignorer les dossiers d'assets qui ne dépendent plus d'Eleventy puisque ce sont alors vos outils et scripts de build qui vont les générer dans votre dossier `dist`.
 
-A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass et compile votre JavaScript avec Webpack par exemple, il suffit de faire les modifications suivantes:
+A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass et compile votre JavaScript avec Webpack par exemple, il faudra faire les modifications suivantes:
 
 `fichier: .eleventy.js`
 
@@ -129,6 +129,11 @@ module.exports = function (eleventyConfig) {
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
+
+  // watch compiled CSS and JS for change and reload browser
+  eleventyConfig.setServerOptions({
+    watch: ["./dist/assets/css/**/*.css", "./dist/assets/js/**/*.js"],
+  });
 
   // override default config
   return {
@@ -149,9 +154,9 @@ src/assets/scss/
 src/assets/js/
 ```
 
-De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`.
+De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`. Eleventy Dev Server va également recharger la page lorsque les fichiers CSS et SJ compliés changent dans vos dossiers `./dist/assets/js/` ou `./dist/assets/css/`.
 
-Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/) ou [Webpack](https://webpack.js.org/) pour la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
+Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) et [PostCSS](https://postcss.org/) pour la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
 
 ## 3. Définir et structurer vos données
 

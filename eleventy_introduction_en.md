@@ -38,7 +38,7 @@ At this point, Eleventy will only create a `node_modules` folder and install its
 Once we have created that file, we can learn some basic Eleventy commands:
 
 - `npx eleventy`: to run Eleventy
-- `npx eleventy --serve`: to run Browsersync and have a local web server that will reload the site in your browser when the site changes
+- `npx eleventy --serve`: to run a local web server that will reload the site in your browser when the site changes
 - `npx eleventy --help`: to explore the list of available commands and flags
 
 Now if we type `npx eleventy` in our terminal, Eleventy will create a `_site` folder and generate our trusty `index.html` file into it. Pretty impressive, right?
@@ -120,7 +120,7 @@ Eleventy doesn't offer an [asset pipeline](https://mxb.dev/blog/eleventy-asset-p
 
 When you start using build tools to create an assets pipeline, you will likely have to modify your `addPassthroughCopy` and ignore assets directories that will not need to be handled by Eleventy because your build tools and scripts will take care of them and generate what you need in your `./dist` directory.
 
-If, for example, you are using NPM scripts to build your CSS from Sass files or if you use Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
+If, for example, you are using NPM scripts to build your CSS from Sass files or if you use esbuild or Webpack to handle your JavaScript pipeline, you will have to make the following modifications:
 
 `file: .eleventy.js`
 
@@ -130,12 +130,17 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
 
+  // watch compiled CSS and JS for change and reload browser
+  eleventyConfig.setServerOptions({
+    watch: ["./dist/assets/css/**/*.css", "./dist/assets/js/**/*.js"],
+  });
+
   // override default config
   return {
     dir: {
       input: "src",
-      output: "dist",
-    },
+      output: "dist"
+    }
   };
 };
 ```
@@ -149,9 +154,9 @@ src/assets/scss/
 src/assets/js/
 ```
 
-Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist/` directory.
+Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist/` directory. The Eleventy Dev Server will also reload your browser whenever your compiled CSS and JS files change in your `./dist/assets/js/` and `./dist/assets/css/` directories.
 
-Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/) or [Webpack](https://webpack.js.org/) for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
+Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) and [PostCSS](https://postcss.org/) for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
 
 ## 3. Define and structure your data
 

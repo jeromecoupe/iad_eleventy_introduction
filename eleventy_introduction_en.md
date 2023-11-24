@@ -139,8 +139,8 @@ module.exports = function (eleventyConfig) {
   return {
     dir: {
       input: "src",
-      output: "dist"
-    }
+      output: "dist",
+    },
   };
 };
 ```
@@ -455,30 +455,41 @@ Filters are essentially devoted to manipulate strings, numbers, booleans, arrays
 
 Eleventy allows you to create your own filters using JavaScript and the `eleventy.config.js` configuration file. these filters can then be used in most templating languages you choose to use.
 
-For example, Nunjucks does not have a built-in date formatting filter. We can easily create one in Eleventy using the popular [`moment.js`](https://momentjs.com/) library.
+For example, Nunjucks does not have a built-in date formatting filter. We can create some in Eleventy using the [`Luxon`](https://moment.github.io/luxon) library. After installing that npm package in uour project, we can add a couple of filters to our config file.
 
 ```js
 // required packages
-const moment = require("moment");
+const { DateTime } = require("luxon");
 
 module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   /**
-   * Date filter
+   * Format date: ISO
    * @param {Date} date
-   * @param {string} format - moment.js date formatting string
    */
-  eleventyConfig.addFilter("date", function (date, format) {
-    return moment(date).format(format);
+  eleventyConfig.addFilter("dateIso", function (date) {
+    const jsDate = new Date(date);
+    const dt = DateTime.fromJSDate(jsDate);
+    return dt.toISO();
+  });
+
+  /**
+   * Format date: Human readable format
+   * @param {Date} date
+   */
+  eleventyConfig.addFilter("dateFull", function (date) {
+    const jsDate = new Date(date);
+    const dt = DateTime.fromJSDate(jsDate);
+    return dt.setLocale(locale).toLocaleString(DateTime.DATE_FULL);
   });
 };
 ```
 
-Once created, we can use that filter in our templates like any native one.
+Once created, we can use these filters in our templates.
 
 ```njk
-<p><time datetime="{{ page.date | date('YYYY-MM-DD') }}">{{ page.date | date("MMMM Do, YYYY") }}</time></p>
+<p><time datetime="{{ page.date | dateIso }}">{{ page.date | dateFull }}</time></p>
 ```
 
 #### Logic tags

@@ -63,8 +63,8 @@ module.exports = function (eleventyConfig) {
   return {
     dir: {
       input: "src",
-      output: "dist"
-    }
+      output: "dist",
+    },
   };
 };
 ```
@@ -93,8 +93,8 @@ module.exports = function (eleventyConfig) {
   return {
     dir: {
       input: "src",
-      output: "dist"
-    }
+      output: "dist",
+    },
   };
 };
 ```
@@ -139,8 +139,8 @@ module.exports = function (eleventyConfig) {
   return {
     dir: {
       input: "src",
-      output: "dist"
-    }
+      output: "dist",
+    },
   };
 };
 ```
@@ -248,8 +248,8 @@ module.exports = function (eleventyConfig) {
   return {
     dir: {
       input: "src",
-      output: "dist"
-    }
+      output: "dist",
+    },
   };
 };
 ```
@@ -324,8 +324,8 @@ module.exports = function (eleventyConfig) {
     dir: {
       input: "src",
       output: "dist",
-      data: "_data"
-    }
+      data: "_data",
+    },
   };
 };
 ```
@@ -345,7 +345,7 @@ module.exports = {
   author: "Name Surname",
   authorTwitterUrl: "https://twitter.com/jeromecoupe",
   authorTwitterHandle: "@twitterhandle",
-  buildTime: new Date()
+  buildTime: new Date(),
 };
 ```
 
@@ -414,7 +414,7 @@ Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` ide
 ```js
 module.exports = {
   layout: "layouts/blogpost.njk",
-  permalink: "blog/{{ page.fileSlug }}/index.html"
+  permalink: "blog/{{ page.fileSlug }}/index.html",
 };
 ```
 
@@ -457,30 +457,41 @@ Les filtres sont essentiellement destinés à manipuler des chaînes de caractè
 
 Eleventy vous permet de créer vos propres filtres en JavaScript à l'aide du fichier `eleventy.config.js`. Ces filtres peuvent ensuite être utilisés dans le language de templating que vous aurez choisi.
 
-Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement un dans Eleventy à l'aide de la librairie [`moment.js`](https://momentjs.com/).
+Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les dates, nous pouvons donc en créer facilement dans Eleventy à l'aide de la librairie [`Luxon`](https://moment.github.io/luxon). Après avoir installé ce package NPM dans notre projet, nous pouvons écrire dans notre fichier de configuration:
 
 ```js
 // required packages
-const moment = require("moment");
+const { DateTime } = require("luxon");
 
 module.exports = function (eleventyConfig) {
   // ... more configuration here .../
 
   /**
-   * Date filter
+   * Format date: ISO
    * @param {Date} date
-   * @param {string} format - moment.js date formatting string
    */
-  eleventyConfig.addFilter("date", function (date, format) {
-    return moment(date).format(format);
+  eleventyConfig.addFilter("dateIso", function (date) {
+    const jsDate = new Date(date);
+    const dt = DateTime.fromJSDate(jsDate);
+    return dt.toISO();
+  });
+
+  /**
+   * Format date: Human readable format
+   * @param {Date} date
+   */
+  eleventyConfig.addFilter("dateFull", function (date) {
+    const jsDate = new Date(date);
+    const dt = DateTime.fromJSDate(jsDate);
+    return dt.setLocale(locale).toLocaleString(DateTime.DATE_FULL);
   });
 };
 ```
 
-Une fois créé, vous pourrez utiliser ce filtre dans vos templates comme suit:
+Une fois créé, vous pourrez utiliser ces filtres dans vos templates comme suit:
 
 ```njk
-<p><time datetime="{{ page.date | date('YYYY-MM-DD') }}">{{ page.date | date("MMMM Do, YYYY") }}</time></p>
+<p><time datetime="{{ page.date | dateIso }}">{{ page.date | dateFull }}</time></p>
 ```
 
 #### Tags de logique
@@ -554,8 +565,8 @@ module.exports = function (eleventyConfig) {
       output: "dist",
       // path is relative to the input directory
       // "_includes" is the default value
-      includes: "_includes"
-    }
+      includes: "_includes",
+    },
   };
 };
 ```

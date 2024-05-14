@@ -51,7 +51,7 @@ Nous allons commencer par créer une architecture de projet et configurer Eleven
 
 - Supprimer le dossier de destination `./_site` créé par Eleventy
 - Créer un dossier `./src` et y placer notre fichier `index.html`
-- Créer un fichier `eleventy.config.js` ou `.eleventy.js` dans la racine de notre projet
+- Créer un fichier `eleventy.config.js` dans la racine de notre projet
 
 Commençons par spécifier les dossiers source et de destination pour Eleventy:
 
@@ -105,13 +105,26 @@ Eleventy va maintenant copier le dossier `./src/assets/` ainsi que tout ce qu'il
 
 Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossiers, fichiers et globs spécifiés dans notre éventuel fichier `.gitignore`.
 
-Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet. Si j'ai appris une chose c'est qu'il vaut mieux être le plus explicite possible, dans votre code comme dans d'autres domaines d'ailleurs. Allons-y.
+Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet.
 
-`fichier: .eleventyignore`
+Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via l'API de configuration et notre fichier `eleventy.config.js`. C'est ma méthode préférée.
 
-```txt
-node_modules/
-dist/
+```js
+module.exports = function (eleventyConfig) {
+  // tell 11ty to avoid processing files
+  eleventyConfig.ignores.add("./src/assets/**/*");
+
+  // copy files / folders
+  eleventyConfig.addPassthroughCopy("./src/assets/");
+
+  // override default config
+  return {
+    dir: {
+      input: "src",
+      output: "dist",
+    },
+  };
+};
 ```
 
 ### Assets pipeline et outils de build
@@ -126,6 +139,11 @@ A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fich
 
 ```js
 module.exports = function (eleventyConfig) {
+  // tell 11ty to avoid processing files
+  eleventyConfig.ignores.add("./src/assets/**/*");
+  // tell 11ty to avoid watching files
+  eleventyConfig.watchIgnores.add("./src/assets/**/*");
+
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
@@ -145,18 +163,9 @@ module.exports = function (eleventyConfig) {
 };
 ```
 
-`fichier: .eleventyignore`
-
-```txt
-node_modules/
-dist/
-src/assets/scss/
-src/assets/js/
-```
-
 De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`. Eleventy Dev Server va également recharger la page lorsque les fichiers CSS et SJ compliés changent dans vos dossiers `./dist/assets/js/` ou `./dist/assets/css/`.
 
-Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) et [PostCSS](https://postcss.org/) pour la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
+Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) et / ou [PostCSS](https://postcss.org/) pour la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
 
 ## 3. Définir et structurer vos données
 

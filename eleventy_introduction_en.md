@@ -51,7 +51,7 @@ We will make a basic project architecture and configure Eleventy by creating an 
 
 - Remove Eleventy's default destination `./_site` folder.
 - Create a `./src` folder and move `index.html` into it.
-- Create an `eleventy.config.js` or `.eleventy.js` file at the root of the project.
+- Create an `eleventy.config.js` file at the root of the project.
 
 Let's start by specifying source and destination directories for Eleventy:
 
@@ -69,7 +69,7 @@ module.exports = function (eleventyConfig) {
 };
 ```
 
-Now when we run the `npx eleventy` command in our terminal from the root of our project, Eleventy will generate a `./dist` folder and will copy our trusty `index.html` file to it.
+Now when we run the `npx eleventy` command in our terminal from the root of our project, Eleventy will generate a `./dist` folder and will copy our `index.html` file to it.
 
 ### Tell Eleventy to copy some folders and files
 
@@ -105,13 +105,26 @@ Eleventy will now copy the `./src/assets/` directory and everything it contains 
 
 By default, Eleventy will ignore the `node_modules` directory as well as the folders, files and globs specified in your `.gitignore` file.
 
-We can also create a `.eleventyignore` file at the root of our project and specify a file, directory or glob pattern per line to explicitly tell Eleventy to ignore all matching files and directories. I have painfully learned that you always want to be as explicit as possible, and that's true for many other things than code, actually. Let's do this.
+We can also create a `.eleventyignore` file at the root of our project and specify a file, directory or glob pattern per line to explicitly tell Eleventy to ignore all matching files or directories.
 
-`file: .eleventyignore`
+Alternatively, you can ignore files using the configuration API in your `eleventy.config.js` file. That's my preferred method.
 
-```txt
-node_modules/
-dist/
+```js
+module.exports = function (eleventyConfig) {
+  // tell 11ty to avoid processing files
+  eleventyConfig.ignores.add("./src/assets/**/*");
+
+  // copy files / folders
+  eleventyConfig.addPassthroughCopy("./src/assets/");
+
+  // override default config
+  return {
+    dir: {
+      input: "src",
+      output: "dist",
+    },
+  };
+};
 ```
 
 ### Assets pipeline and build tools
@@ -126,6 +139,11 @@ If, for example, you are using NPM scripts to build your CSS from Sass files or 
 
 ```js
 module.exports = function (eleventyConfig) {
+  // tell 11ty to avoid processing files
+  eleventyConfig.ignores.add("./src/assets/**/*");
+  // tell 11ty to avoid watching files
+  eleventyConfig.watchIgnores.add("./src/assets/**/*");
+
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/fonts/");
   eleventyConfig.addPassthroughCopy("./src/assets/img/");
@@ -145,18 +163,9 @@ module.exports = function (eleventyConfig) {
 };
 ```
 
-`file: .eleventyignore`
-
-```txt
-node_modules/
-dist/
-src/assets/scss/
-src/assets/js/
-```
-
 Eleventy will now completely ignore the `./src/assets/scss/` and `./src/assets/js/` directories, while build tools and scripts will generate the required outputs in your `./dist/` directory. The Eleventy Dev Server will also reload your browser whenever your compiled CSS and JS files change in your `./dist/assets/js/` and `./dist/assets/css/` directories.
 
-Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) and [PostCSS](https://postcss.org/) for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
+Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) and / or [PostCSS](https://postcss.org/) for most of my projects. Eleventy can very easily be integrated in this kind of workflow.
 
 ## 3. Define and structure your data
 
@@ -165,7 +174,7 @@ Eleventy allows you to work with two data sources:
 1. **Markdown files** (for the main content) and YAML front matter (for the rest of the data structure) that can easily be turned into collections (more on that later).
 2. **JSON and/or JS data files** that can either be static or dynamic (fetched from an API).
 
-These two types of data sources are not mutually exclusive. They are often used simultaneously in most projects. Let's dive in.
+These two types of data sources are not mutually exclusive. They are often used simultaneously in projects. Let's dive in.
 
 ### Collections
 

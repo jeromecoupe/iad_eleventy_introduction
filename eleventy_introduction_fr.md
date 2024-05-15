@@ -111,7 +111,7 @@ Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via 
 
 ```js
 module.exports = function (eleventyConfig) {
-  // tell 11ty to avoid processing files
+  // avoid processing files
   eleventyConfig.ignores.add("./src/assets/**/*");
 
   // copy files / folders
@@ -139,7 +139,7 @@ A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fich
 
 ```js
 module.exports = function (eleventyConfig) {
-  // tell 11ty to avoid processing files
+  // avoid processing files
   eleventyConfig.ignores.add("./src/assets/**/*");
   // tell 11ty to avoid watching files
   eleventyConfig.watchIgnores.add("./src/assets/**/*");
@@ -250,16 +250,7 @@ module.exports = function (eleventyConfig) {
     return collection.getFilteredByGlob("./src/team/*.md");
   });
 
-  // copy files
-  eleventyConfig.addPassthroughCopy("./src/assets/");
-
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-    },
-  };
+  // ... more configuration ...
 };
 ```
 
@@ -290,14 +281,14 @@ Si vous souhaitez classer alphabétiquement les membres de votre équipe sur bas
 
 ```js
 module.exports = function (eleventyConfig) {
-  // ... more configuration here .../
-
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
       return a.data.surname.localeCompare(b.data.surname);
     });
   });
+
+  // ... more configuration ...
 };
 ```
 
@@ -307,14 +298,13 @@ Si vous devez par contre filtrer une collection pour exclure certaines données,
 const now = new Date();
 
 module.exports = function(eleventyConfig) {
-
-  // ... more configuration here .../
-
   // blogposts collection
   eleventyConfig.addCollection("blogposts", function(collection) {
   return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
     return item.data.draft !== true && item.date <= now;
   });
+
+  // ... more configuration ...
 };
 ```
 
@@ -326,7 +316,7 @@ Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. 
 
 ```js
 module.exports = function (eleventyConfig) {
-  // ... more configuration here .../
+  // ... more configuration ...
 
   // override default config
   return {
@@ -473,8 +463,6 @@ Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les date
 const { DateTime } = require("luxon");
 
 module.exports = function (eleventyConfig) {
-  // ... more configuration here .../
-
   /**
    * Format date: ISO
    * @param {Date} date
@@ -494,6 +482,8 @@ module.exports = function (eleventyConfig) {
     const dt = DateTime.fromJSDate(jsDate);
     return dt.setLocale(locale).toLocaleString(DateTime.DATE_FULL);
   });
+
+  // ... more configuration ...
 };
 ```
 
@@ -567,6 +557,8 @@ Les includes comme l'héritage de templates sont utilisables avec Eleventy. La s
 
 ```js
 module.exports = function (eleventyConfig) {
+  // ... more configuration ...
+
   // override default config
   return {
     dir: {

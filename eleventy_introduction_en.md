@@ -111,7 +111,7 @@ Alternatively, you can ignore files using the configuration API in your `elevent
 
 ```js
 module.exports = function (eleventyConfig) {
-  // tell 11ty to avoid processing files
+  // avoid processing files
   eleventyConfig.ignores.add("./src/assets/**/*");
 
   // copy files / folders
@@ -139,9 +139,9 @@ If, for example, you are using NPM scripts to build your CSS from Sass files or 
 
 ```js
 module.exports = function (eleventyConfig) {
-  // tell 11ty to avoid processing files
+  // avoid processing files
   eleventyConfig.ignores.add("./src/assets/**/*");
-  // tell 11ty to avoid watching files
+  // avoid watching files
   eleventyConfig.watchIgnores.add("./src/assets/**/*");
 
   // copy files
@@ -248,16 +248,7 @@ module.exports = function (eleventyConfig) {
     return collection.getFilteredByGlob("./src/team/*.md");
   });
 
-  // copy files
-  eleventyConfig.addPassthroughCopy("./src/assets/");
-
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-    },
-  };
+  // ... more configuration ...
 };
 ```
 
@@ -288,14 +279,14 @@ By contrast, if you need to sort your team members alphabetically using the valu
 
 ```js
 module.exports = function (eleventyConfig) {
-  // ... more configuration here .../
-
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
       return a.data.surname.localeCompare(b.data.surname);
     });
   });
+
+  // ... more configuration ...
 };
 ```
 
@@ -305,14 +296,13 @@ If you need to filter a collection to exclude some data, you can use the JavaScr
 const now = new Date();
 
 module.exports = function(eleventyConfig) {
-
-  // ... more configuration here .../
-
   // blogposts collection
   eleventyConfig.addCollection("blogposts", function(collection) {
   return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
     return item.data.draft !== true && item.date <= now;
   });
+
+  // ... more configuration ...
 };
 ```
 
@@ -324,7 +314,7 @@ By default, these files have to be stored in the `./src/_data/` directory. This 
 
 ```js
 module.exports = function (eleventyConfig) {
-  // ... more configuration here .../
+  // ... more configuration ...
 
   // override default config
   return {
@@ -471,7 +461,7 @@ For example, Nunjucks does not have a built-in date formatting filter. We can cr
 const { DateTime } = require("luxon");
 
 module.exports = function (eleventyConfig) {
-  // ... more configuration here .../
+  // ... more configuration ...
 
   /**
    * Format date: ISO

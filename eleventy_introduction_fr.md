@@ -58,14 +58,11 @@ Commençons par spécifier les dossiers source et de destination pour Eleventy:
 `fichier: eleventy.config.js`
 
 ```js
-module.exports = function (eleventyConfig) {
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-    },
-  };
+export const config = {
+  dir: {
+    input: "src",
+    output: "dist",
+  },
 };
 ```
 
@@ -85,21 +82,28 @@ Modifier le fichier `eleventy.config.js` comme suit:
 `fichier: eleventy.config.js`
 
 ```js
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // copy files
   eleventyConfig.addPassthroughCopy("./src/assets/");
+}
 
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-    },
-  };
+// override default config
+export const config = {
+  dir: {
+    input: "src/",
+    output: "dist/",
+    data: "_data",
+    includes: "_includes",
+  },
+  templateFormats: ["njk", "md", "html"],
+  htmlTemplateEngine: "njk",
+  markdownTemplateEngine: "njk",
 };
 ```
 
 Eleventy va maintenant copier le dossier `./src/assets/` ainsi que tout ce qu'il contient vers `./dist/assets/` en préservant la structure des dossiers enfants.
+
+Les options de configuration utilisées plus haut sont toutes détaillées dans la documentation.
 
 ### Ignorer certains dossiers et fichiers
 
@@ -107,38 +111,43 @@ Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossier
 
 Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet.
 
-Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via l'API de configuration et notre fichier `eleventy.config.js`. C'est ma méthode préférée.
+Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via l'API de configuration et notre fichier `eleventy.config.js`. C'est ma méthode préférée. Tant que nous y sommes, nous allons aussi supprimer ces fichiers de la liste de
 
 ```js
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // avoid processing files
   eleventyConfig.ignores.add("./src/assets/**/*");
 
   // copy files / folders
   eleventyConfig.addPassthroughCopy("./src/assets/");
+}
 
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-    },
-  };
+// override default config
+export const config = {
+  dir: {
+    input: "src/",
+    output: "dist/",
+    data: "_data",
+    includes: "_includes",
+  },
+  templateFormats: ["njk", "md", "html"],
+  htmlTemplateEngine: "njk",
+  markdownTemplateEngine: "njk",
 };
 ```
 
 ### Assets pipeline et outils de build
 
-Eleventy ne possède pas d'[asset pipeline](https://mxb.dev/blog/eleventy-asset-pipeline/) ou d'outil de build par défaut. Il est donc intéressant d'intégrer à Eleventy un outil de build, que ce soit des scripts NPM, Gulp, Webpack ou toute autre alternative.
+Eleventy ne possède pas d'[asset pipeline](https://mxb.dev/blog/eleventy-asset-pipeline/) ou d'outil de build par défaut. Il est donc intéressant d'intégrer à Eleventy un outil de build, que ce soit des scripts NPM, Vite ou toute autre alternative.
 
-Lorsque vous commencez à utiliser des outils de build pour vos assets, vous devrez modifier votre configuration de `addPassthroughCopy` et probablement ignorer les dossiers d'assets qui ne dépendent plus d'Eleventy puisque ce sont alors vos outils et scripts de build qui vont les générer dans votre dossier `dist`.
+Lorsque vous commencez à utiliser des outils de build pour vos assets, vous devrez modifier votre configuration de `addPassthroughCopy` et probablement ignorer les dossiers d'assets qui ne dépendent plus d'Eleventy. Vos outils et scripts de build vont générer ces derniers dans votre dossier `dist`.
 
-A titre d'exemple, si un script NPM génère notre fichier CSS à partir de fichiers Sass et compile votre JavaScript avec Webpack par exemple, il faudra faire les modifications suivantes:
+A titre d'exemple, si vos outils de build gèrent votre CSS et votre JavaScript, il vous faudra faire les modifications suivantes:
 
 `fichier: eleventy.config.js`
 
 ```js
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // avoid processing files
   eleventyConfig.ignores.add("./src/assets/**/*");
   // tell 11ty to avoid watching files
@@ -152,24 +161,29 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.setServerOptions({
     watch: ["./dist/assets/css/**/*.css", "./dist/assets/js/**/*.js"],
   });
+}
 
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-    },
-  };
+// override default config
+export const config = {
+  dir: {
+    input: "src/",
+    output: "dist/",
+    data: "_data",
+    includes: "_includes",
+  },
+  templateFormats: ["njk", "md", "html"],
+  htmlTemplateEngine: "njk",
+  markdownTemplateEngine: "njk",
 };
 ```
 
-De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/scss/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`. Eleventy Dev Server va également recharger la page lorsque les fichiers CSS et SJ compliés changent dans vos dossiers `./dist/assets/js/` ou `./dist/assets/css/`.
+De cette façon, Eleventy va complètement ignorer les dossiers `./src/assets/css/` et `./src/assets/js/`, pendant que vos scripts ou outils de build vont générer les fichiers nécessaires dans votre dossier `./dist/`. [Eleventy Dev Server](https://www.11ty.dev/docs/dev-server/) va également recharger la page lorsque les fichiers CSS et SJ compliés changent dans vos dossiers `./dist/assets/js/` ou `./dist/assets/css/`.
 
-Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/), [Sass](https://sass-lang.com/) et / ou [PostCSS](https://postcss.org/) pour la plupart de mes projets et Eleventy est très facile à intégrer à ce genre de workflow.
+Personnellement, j'utilise des scripts NPM en combinaison avec [esbuild](https://esbuild.github.io/) et [LightningCSS](https://lightningcss.dev) pour la plupart de mes projets Eleventy.
 
 ## 3. Définir et structurer vos données
 
-Eleventy permet de travailler avec deux grandes sources de données:
+Eleventy permet de travailler avec deux sources de données principales:
 
 1. **des fichiers Markdown** (pour le contenu principal) et YAML front matter (pour le reste de la structure de données) qui peuvent être facilement convertis en collections.
 2. **des fichiers JSON et/ou JS** qui peuvent soit être statiques soit dynamiques (provenant d'une API).
@@ -218,7 +232,7 @@ Chaque membre de l'équipe éditoriale pourrait être représenté par un fichie
 name: "Jérôme"
 surname: "Coupé"
 image: "jerome_coupe.jpg"
-twitter: "https://twitter.com/jeromecoupe"
+mastodon: "https://mastodon.social/@jeromecoupe"
 github: "https://github.com/jeromecoupe"
 website: "https://www.webstoemp.com"
 ---
@@ -239,7 +253,7 @@ Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer
 `fichier: eleventy.config.js`
 
 ```js
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // blogposts collection
   eleventyConfig.addCollection("blogposts", function (collection) {
     return collection.getFilteredByGlob("./src/blog/*.md");
@@ -251,22 +265,28 @@ module.exports = function (eleventyConfig) {
   });
 
   // ... more configuration ...
-};
+}
 ```
 
 Vous pouvez maintenant accéder à vos collections en utilisant `collections.blogposts` et `collections.team` dans vos templates. Nous y reviendrons dans le chapitre consacré au templating.
 
 Il me reste à signaler qu'Eleventy créé par défaut une collection contenant tous vos éléments de contenus, c'est-à-dire tous les fichiers gérés par Eleventy. Cette collection spéciale est accessible via `collections.all`.
 
-Lorsqu'une collection est créée, les clefs suivantes sont automatiquement créées:
+Lorsqu'une collection est créée, les clefs suivantes sont automatiquement disponibles:
 
-- `inputPath`: le chemin complet vers le fichier source (inclus le chemin vers le dossier d'input d'Eleventy).
-- `fileSlug`: une transformation en slug du nom de fichier du fichier source. Utile dans la construction de permalinks. En savoir plus sur `fileslug` [dans la documentation](https://www.11ty.dev/docs/data-eleventy-supplied/).
-- `outputPath`: le chemin complet vers le fichier d'output de cet élément de contenu.
-- `url`: l'URL utilisée pour lier vers un élément de la collection. En général cette valeur est basée sur celle de la clef `permalink`
-- `date`: la date utilisée pour le classement. Pour en savoir plus sur les [dates des éléments de contenus](https://www.11ty.io/docs/dates/), référez-vous à la documentation.
+- `page`: contient la plupart des variables créées par Eleventy
+  - `page.url`: peut être utilisée dans un attribut `href`
+  - `page.fileSlug`: nom du fichier d'input moins l'extension de fichier
+  - `page.filePathStem`: chemin d'accès vers le fichiers d'input, moins l'extension de fichier
+  - `page.date`: la date du fichier source
+  - `page.inputPath`: chemin d'accès vers le fichier source (inclus le dossier d'input)
+  - `page.outputPath`: checmin d'accès vers le fichiers d'output, dépend de votre dossier d'output
+  - `page.outputFileExtension`: extension de fichier en output
+  - `page.templateSyntax`: une liste des lgg de templatings utilisés pour le processing
+  - `page.rawInput`: le contenu texte non parsé et non rendu
+  - `page.lang`: disponible à partir de la version 2.0 avec le plugin i18n
 - `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritées des layouts.
-- `templateContent`: le contenu de ce template une fois rendu par Eleventy. N'inclus pas les templates étendus.
+- `templateContent` ou `content`: le contenu du template une fois rendu par Eleventy. N'inclus pas les templates étendus.
 
 #### Classer et filtrer vos collections
 
@@ -280,7 +300,7 @@ Si un classement par date correspond à ce que vous souhaitez, vous pouvez éven
 Si vous souhaitez classer alphabétiquement les membres de votre équipe sur base de la clef `surname`, le code suivant classerait ces membres de l'équipe par ordre ascendant :
 
 ```js
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
     return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
@@ -289,7 +309,7 @@ module.exports = function (eleventyConfig) {
   });
 
   // ... more configuration ...
-};
+}
 ```
 
 Si vous devez par contre filtrer une collection pour exclure certaines données, il vous faudra utiliser la méthode `filter` en JavaScript. Vous pouvez par exemple inclure seulement les blogposts ayant une clef `draft` dont la valeur n'est pas `true` ou qui ont une date de publication inférieure à la date de génération du site.
@@ -297,7 +317,7 @@ Si vous devez par contre filtrer une collection pour exclure certaines données,
 ```js
 const now = new Date();
 
-module.exports = function(eleventyConfig) {
+export default function(eleventyConfig) {
   // blogposts collection
   eleventyConfig.addCollection("blogposts", function(collection) {
   return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
@@ -315,17 +335,19 @@ Outre les collections, l'autre grande source de données pour Eleventy sont les 
 Ces fichiers doivent par défaut être stockés dans le dossier `./src/_data/`. Cet emplacement des fichiers de données peut être modifié dans votre fichier de configuration `eleventy.config.js`.
 
 ```js
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // ... more configuration ...
+}
 
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-      data: "_data",
-    },
-  };
+// override default config
+export const config = {
+  dir: {
+    // more configuration
+    // "_data" is the default value
+    data: "_data",
+    // more configuration
+  },
+  // more configuration
 };
 ```
 
@@ -336,25 +358,22 @@ Les fichiers de données statiques sont simplement des fichiers JSON ou JS conte
 `fichier: ./src/_data/site.js`
 
 ```js
-module.exports = {
   title: "Title of the site",
   description: "Description of the site",
   url: "https://www.mydomain.com",
   baseUrl: "/",
   author: "Name Surname",
-  authorTwitterUrl: "https://twitter.com/jeromecoupe",
-  authorTwitterHandle: "@twitterhandle",
   buildTime: new Date(),
 };
 ```
 
-Les données sont accessibles dans vos templates à l'aide du nom de fichier utilisé comme clef. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`.
+Les données sont accessibles dans vos templates à l'aide du nom de fichier utilisé comme clef. Par exemples les données contenues dans le fichier `./src/_data/site.js` sont accessibles dans vos templates via la variable `site`. Par exemple, pour afficher une valeur stockée dans ce fichier, il vous faudra utiliser une syntaxe pointée: `{{ site.author }}`
 
 #### Fichiers data dynamiques
 
-Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne vous empêche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/headless-cms-graphql-api-eleventy/) en utilisant [`node-fetch`](https://www.npmjs.com/package/node-fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
+Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne vous empêche de [vous connecter à une API dans l'un de ces fichiers](https://www.webstoemp.com/blog/performant-data-fetching-promises-eleventy/) en utilisant [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) ou [`axios`](https://www.npmjs.com/package/axios) par exemple.
 
-A chaque fois que votre site est généré, Eleventy exécutera ce script et traitera le JSON retourné par l'API comme un fichier de données statique pour générer vos pages.
+A chaque fois que votre site est généré, Eleventy exécutera ce script et traitera le JSON retourné par l'API comme un fichier de données statique.
 
 ### Permalinks et URLs
 
@@ -411,7 +430,7 @@ Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` ide
 `fichier: ./src/blog/blog.11tydata.js`
 
 ```js
-module.exports = {
+export default {
   layout: "layouts/blogpost.njk",
   permalink: "blog/{{ page.fileSlug }}/index.html",
 };
@@ -460,9 +479,9 @@ Par exemple, Nunjucks ne possède pas de filtre permettant de formatter les date
 
 ```js
 // required packages
-const { DateTime } = require("luxon");
+import { DateTime } from "luxon";
 
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   /**
    * Format date: ISO
    * @param {Date} date
@@ -484,7 +503,7 @@ module.exports = function (eleventyConfig) {
   });
 
   // ... more configuration ...
-};
+}
 ```
 
 Une fois créé, vous pourrez utiliser ces filtres dans vos templates comme suit:
@@ -556,19 +575,18 @@ Les includes comme l'héritage de templates sont utilisables avec Eleventy. La s
 `fichier: eleventy.config.js`
 
 ```js
-module.exports = function (eleventyConfig) {
-  // ... more configuration ...
+export default function (eleventyConfig) {
+  // more configuration
+}
 
-  // override default config
-  return {
-    dir: {
-      input: "src",
-      output: "dist",
-      // path is relative to the input directory
-      // "_includes" is the default value
-      includes: "_includes",
-    },
-  };
+// override default config
+export const config = {
+  dir: {
+    // path is relative to the input directory
+    // "_includes" is the default value
+    includes: "_includes",
+  },
+  // more configuration
 };
 ```
 
@@ -595,15 +613,16 @@ Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
   <!-- Feed -->
   <link rel="alternate" href="/feed.xml" title="{{ site.title }} - Blog RSS" type="application/atom+xml">
 
-  <!-- Twitter + Open Graph -->
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:creator" content="{{ site.authorTwitter }}" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="article:author" content="{{ site.author }}" />
   <meta property="og:url" content="{{ site.url ~ page.url }}" />
   <meta property="og:title" content="{{ metaTitle }}" />
   <meta property="og:description" content="{{ metaDescription }}" />
   <meta property="og:image" content="{{ metaImage }}" />
 
-  <!-- Apple icon (minimal) -->
+  <!-- Favicon + Apple icon (minimal) -->
+  <link rel="icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 </head>
@@ -665,7 +684,7 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
           </div>
         </header>
 
-        <div class="u-markdown">
+        <div class="c-richtext">
           {{ content | safe }}
         </div>
 
@@ -702,9 +721,9 @@ permalink: /about/index.html
           <img class="o-fluidimage" src="/assets/img/team/{{ member.image }}" >
           <h2 class="c-teammember__title">{{ member.name }} {{ member.surname }}</h2>
           <div class="c-teammember__bio">{{ member.templateContent | safe }}</div>
-          {% if member.twitter or member.github or member.website %}
+          {% if member.mastodon or member.github or member.website %}
             <ul class="u-hlist  u-hlist--xs">
-              {% if member.twitter %}<li><a href="{{ member.twitter }}">{% include "svg/icon-twitter.svg" %}</a></li>{% endif %}
+              {% if member.mastodon %}<li><a href="{{ member.mastodon }}">{% include "svg/icon-mastodon.svg" %}</a></li>{% endif %}
               {% if member.github %}<li><a href="{{ member.github }}">{% include "svg/icon-github.svg" %}</a></li>{% endif %}
               {% if member.website %}<li><a href="{{ member.website }}">{% include "svg/icon-website.svg" %}</a></li>{% endif %}
             </ul>
@@ -762,11 +781,33 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
   {% set currentPage = pagination.pageNumber + 1 %}
   {% if totalPages > 1 %}
     <ul class="c-pagination">
-      {% if pagination.href.previous %}<li class="c-pagination__item  c-pagination__item--first"><a class="c-pagination__link" href="{{ pagination.href.first }}">First</a></li>{% endif %}
-      {% if currentPage > 1 %}<li class="c-pagination__item"><a class="c-pagination__link" href="{{ pagination.hrefs[pagination.pageNumber - 1] }}">{{ currentPage - 1 }}</a></li>{% endif %}
-      <li class="c-pagination__item"><span class="c-pagination__current" href="{{ pagination.hrefs[pagination.pageNumber] }}">{{ currentPage }}</span></li>
-      {% if currentPage < totalPages %}<li class="c-pagination__item"><a class="c-pagination__link" href="{{ pagination.hrefs[pagination.pageNumber + 1] }}">{{ currentPage + 1 }}</a></li>{% endif %}
-      {% if pagination.href.next %}<li class="c-pagination__item  c-pagination__item--last"><a class="c-pagination__link" href="{{ pagination.href.last }}">Last</a></li>{% endif %}
+      {% if pagination.href.previous %}
+        <li class="c-pagination__item  c-pagination__item--first">
+          <a class="c-pagination__link" href="{{ pagination.href.first }}">First</a>
+        </li>
+      {% endif %}
+
+      {% if currentPage > 1 %}
+        <li class="c-pagination__item">
+          <a class="c-pagination__link" href="{{ pagination.hrefs[pagination.pageNumber - 1] }}">{{ currentPage - 1 }}</a>
+        </li>
+      {% endif %}
+
+      <li class="c-pagination__item">
+        <span class="c-pagination__current" href="{{ pagination.hrefs[pagination.pageNumber] }}">{{ currentPage }}</span>
+      </li>
+
+      {% if currentPage < totalPages %}
+        <li class="c-pagination__item">
+          <a class="c-pagination__link" href="{{ pagination.hrefs[pagination.pageNumber + 1] }}">{{ currentPage + 1 }}</a>
+        </li>
+      {% endif %}
+
+      {% if pagination.href.next %}
+        <li class="c-pagination__item  c-pagination__item--last">
+          <a class="c-pagination__link" href="{{ pagination.href.last }}">Last</a>
+        </li>
+      {% endif %}
     </ul>
   {% endif %}
 

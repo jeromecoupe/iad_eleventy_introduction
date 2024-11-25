@@ -47,6 +47,20 @@ Let's configure Eleventy to better suit our needs.
 
 ### Configuration
 
+#### package.json
+
+We will use ESM (`import` and `export`) throughout this workshop. In order for all your `.js` files to be interpreted as ESM instead of CommonJS, add `"type": "module"` to your `package.json` file.
+
+`file: package.json`
+
+```json
+{
+  "type": "module"
+}
+```
+
+#### eleventy.config.js
+
 We will make a basic project architecture and configure Eleventy by creating an `eleventy.config.js` configuration file at the root of our project.
 
 - Remove Eleventy's default destination `./_site` folder.

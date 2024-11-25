@@ -47,6 +47,22 @@ Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
 
 ### Configuration
 
+#### package.json
+
+Nous utiliserons la syntaxe ESM (`import` et `export`) dans la cadre de ce workshop.
+
+Afin que tous vos fichiers `.js` soient considérés comme utilisant la syntaxe ESM plutôt que la syntaxe CommonJs, il vous faudra ajouter `"type": "module"` à votre fichier `package.json`.
+
+`file: package.json`
+
+```json
+{
+  "type": "module"
+}
+```
+
+#### eleventy.config.js
+
 Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `eleventy.config.js`:
 
 - Supprimer le dossier de destination `./_site` créé par Eleventy

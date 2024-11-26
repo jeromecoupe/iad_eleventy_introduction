@@ -37,11 +37,11 @@ At this point, Eleventy will only create a `node_modules` folder and install its
 
 Once we have created that file, we can learn some basic Eleventy commands:
 
-- `npx eleventy`: to run Eleventy
-- `npx eleventy --serve`: to run a local web server that will reload the site in your browser when the site changes
-- `npx eleventy --help`: to explore the list of available commands and flags
+- `npx @11ty/eleventy`: to run Eleventy
+- `npx @11ty/eleventy --serve`: to run a local web server that will reload the site in your browser when the site changes
+- `npx @11ty/eleventy --help`: to explore the list of available commands and flags
 
-Now if we type `npx eleventy` in our terminal, Eleventy will create a `_site` folder and generate our trusty `index.html` file into it. Pretty impressive, right?
+Now if we type `npx @11ty/eleventy` in our terminal, Eleventy will create a `_site` folder and generate our trusty `index.html` file into it. Pretty impressive, right?
 
 Let's configure Eleventy to better suit our needs.
 
@@ -81,7 +81,7 @@ export const config = {
 };
 ```
 
-Now when we run the `npx eleventy` command in our terminal from the root of our project, Eleventy will generate a `./dist` folder and will copy our `index.html` file to it.
+Now when we run the `npx @11ty/eleventy` command in our terminal from the root of our project, Eleventy will generate a `./dist` folder and will copy our `index.html` file to it.
 
 ### Tell Eleventy to copy some folders and files
 

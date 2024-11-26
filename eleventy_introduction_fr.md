@@ -37,11 +37,11 @@ Eleventy va simplement s'installer dans un dossier `node_modules`. Pour pouvoir 
 
 Une fois ce fichier créé, nous pouvons tester les commandes principales d'Eleventy:
 
-- `npx eleventy`: pour faire tourner Eleventy
-- `npx eleventy --serve`: pour faire tourner un serveur web local qui va recharger le site dans votre navigateur dès que le site change
-- `npx eleventy --help`: pour avoir la liste des commandes existantes
+- `npx @11ty/eleventy`: pour faire tourner Eleventy
+- `npx @11ty/eleventy --serve`: pour faire tourner un serveur web local qui va recharger le site dans votre navigateur dès que le site change
+- `npx @11ty/eleventy --help`: pour avoir la liste des commandes existantes
 
-Vous connaissez maintenant les commandes de base, nécessaires pour commencer à travailler. Si vous tapez `npx eleventy`, Eleventy devrait créer pour vous un dossier `_site` et y placer une copie de votre fichier `index.html`.
+Vous connaissez maintenant les commandes de base, nécessaires pour commencer à travailler. Si vous tapez `npx @11ty/eleventy`, Eleventy devrait créer pour vous un dossier `_site` et y placer une copie de votre fichier `index.html`.
 
 Voyons maintenant comment configurer Eleventy en fonction de nos besoins.
 
@@ -82,7 +82,7 @@ export const config = {
 };
 ```
 
-Si nous exécutons la commande `npx eleventy` dans notre terminal, Eleventy générera un dossier `./dist` pour y copier notre fichier `index.html`.
+Si nous exécutons la commande `npx @11ty/eleventy` dans notre terminal, Eleventy générera un dossier `./dist` pour y copier notre fichier `index.html`.
 
 ### Copier quelques fichiers tels quels
 

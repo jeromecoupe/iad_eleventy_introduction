@@ -236,7 +236,15 @@ categories:
 
 ## Level 2 title
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae voluptatibus reiciendis dignissimos accusantium illo, voluptates consequuntur fugit amet quo sed nisi facere animi incidunt assumenda exercitationem, nam omnis perspiciatis praesentium.
+Some content for this blogpost
+```
+
+Dans ce cas, Eleventy [dérivera la date](https://www.11ty.dev/docs/dates/) à partir du nom de fichier. Une autre option est de spécifier la date publication explicitement dans le YAML front matter.
+
+```md
+---
+date: 2024-11-26
+---
 ```
 
 Chaque membre de l'équipe éditoriale pourrait être représenté par un fichier ayant la structure suivante:
@@ -319,11 +327,10 @@ Si vous souhaitez classer alphabétiquement les membres de votre équipe sur bas
 export default function (eleventyConfig) {
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
-    return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
-      return a.data.surname.localeCompare(b.data.surname);
-    });
+    return collection
+      .getFilteredByGlob("./src/team/*.md")
+      .sort((a, b) => a.data.surname.localeCompare(b.data.surname));
   });
-
   // ... more configuration ...
 }
 ```
@@ -333,15 +340,15 @@ Si vous devez par contre filtrer une collection pour exclure certaines données,
 ```js
 const now = new Date();
 
-export default function(eleventyConfig) {
+export default function (eleventyConfig) {
   // blogposts collection
-  eleventyConfig.addCollection("blogposts", function(collection) {
-  return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
-    return item.data.draft !== true && item.date <= now;
+  eleventyConfig.addCollection("blogposts", function (collection) {
+    return collection
+      .getFilteredByGlob("./src/blog/*.md")
+      .filter((item) => item.data.draft !== true && item.date <= now);
   });
-
   // ... more configuration ...
-};
+}
 ```
 
 ### Fichiers de données (JS ou JSON)
@@ -434,7 +441,7 @@ Plutôt que de spécifier une valeur YAML front matter identique dans tous les f
 
 Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blog/blog.json`, `.src/blog/blog.11data.json` ou `.src/blog/blog.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
 
-`fichier: ./src/blog/blog.json` ou `fichier: ./src/blog/blog.11tydata.json`
+`fichier: ./src/blog/blog.json`
 
 ```json
 {
@@ -676,7 +683,7 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
 
 {% block content %}
   <main>
-    <article class="c-blogpost">
+    <div class="c-blogpost">
       <div class="c-blogpost__media">
         <picture>
             <source srcset="/assets/img/blogposts/{{ imageMedium }} 1024w,
@@ -705,10 +712,14 @@ Pour ce qui est des blogposts, il nous faut un layout un peu particulier qui va 
         </div>
 
       </div>
-    </article>
+    </div>
   </main>
 {% endblock %}
 ```
+
+Chaque blogpost en markdown va utiliser ce layout `blogposts.njk` qui va, à son tour, étendre le template `base.njk` pour générer toutes nos pages de détail.
+
+Les fichiers markdown spécifient le layout à utiliser via une key `layout` qui prend comme valeur un chemin d'accès (ici `layouts/blogpost.njk`). Comme vu plus haut, nous pouvons utiliser des fichiers de données liés aux dossiers pour spécifier cette `key` pour tous les fichiers d'un directory.
 
 #### Pages
 

@@ -89,7 +89,7 @@ We also can use this configuration file to tell Eleventy to copy any file or fol
 
 - Create a `./src/assets/img/` directory and drop a few optimized images in there.
 - Create a `./src/assets/fonts/` directory and drop a few font files in there.
-- Create a `./src/assets/js/` directory and drop a JavaScript file in there.
+- Create a `./src/assets/js/` directory and drop a JavaScript file (or two) in there.
 - Create a `./src/assets/css/` directory and drop a CSS file in there.
 
 Let's modify our `eleventy.config.js` file as follows:
@@ -116,7 +116,7 @@ export const config = {
 };
 ```
 
-Eleventy will now copy the `./src/assets/` directory and everything it contains to the output directory while preserving the directories structure.
+Eleventy will now copy the `./src/assets/` directory and everything it contains to the output directory, while preserving the directories structure.
 
 ### Ignore directories and files
 
@@ -125,6 +125,8 @@ By default, Eleventy will ignore the `node_modules` directory as well as the fol
 We can also create a `.eleventyignore` file at the root of our project and specify a file, directory or glob pattern per line to explicitly tell Eleventy to ignore all matching files or directories.
 
 Alternatively, you can ignore files using the configuration API in your `eleventy.config.js` file. That's my preferred method. While we are at it, we will also exclude those files from Eleventy's watch list.
+
+`file: eleventy.config.js`
 
 ```js
 export default function (eleventyConfig) {
@@ -156,7 +158,7 @@ Eleventy doesn't offer an [asset pipeline](https://mxb.dev/blog/eleventy-asset-p
 
 When you start using build tools to create an assets pipeline, you will likely have to modify your `addPassthroughCopy` and ignore assets directories that will not need to be handled by Eleventy. Your build step will take care of them and generate what you need in your `./dist` directory.
 
-If, for example, yout are using build tools to handle your CSS and JavaScript files, you will have to make the following modifications:
+If, for example, you are using build tools to handle your CSS and JavaScript files, you will have to make the following modifications:
 
 `file: eleventy.config.js`
 
@@ -192,7 +194,7 @@ export const config = {
 
 Eleventy will now completely ignore the `./src/assets/css/` and `./src/assets/js/` directories, while your build tools and scripts will generate the required outputs in your `./dist/` directory. The [Eleventy Dev Server](https://www.11ty.dev/docs/dev-server/) will also reload your browser whenever your compiled CSS and JS files change in your `./dist/assets/js/` and `./dist/assets/css/` directories.
 
-Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/), [Lightning CSS](https://lightningcss.dev/) for most of my Eleventy projects.
+Personally, I use NPM scripts combined with [esbuild](https://esbuild.github.io/) (JS files) [Lightning CSS](https://lightningcss.dev/) (CSS files) for most of my Eleventy projects.
 
 ## 3. Define and structure your data
 
@@ -211,7 +213,7 @@ Collections in Eleventy allow you to group content items in interesting ways and
 
 Markdown files coupled with a YAML front matter allow you to use text files as structured data sources. It's a common feature of most SSG out there.
 
-The Markdown part of the file generally represents the main content of your data and is generally converted to HTML. The YAML front matter allows you to create a data structure with different types of data (strings, arrays, objects, etc.).
+The Markdown part of the file generally represents the main content of your data and is usually converted to HTML. The YAML front matter allows you to create a data structure with different types of data (strings, arrays, objects, etc.).
 
 If you want to build a blog, your blogposts are going to be represented by Markdown files with a YAML front matter that could look something like the following:
 
@@ -236,6 +238,14 @@ categories:
 This is some content for this blogpost.
 ```
 
+In this case, the [date](https://www.11ty.dev/docs/dates/) of the blogpost will be derived from the filename. Another option is to specify a date in the YAML front-matter
+
+```md
+---
+date: 2024-11-26
+---
+```
+
 Let's say you also need to model a data structure for a team. Each team member could be represented by a file like this one:
 
 `file: ./src/projects/jerome-coupe.md`
@@ -255,7 +265,7 @@ Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgiu
 
 #### Collection API
 
-For Eleventy to group those files in an array that will allow you to wok with it in your templates, you have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
+For Eleventy to group those files in an array that will allow you to work with it in your templates, you have to create a [collection](https://www.11ty.io/docs/collections/). Any content item can be part of one or more collections.
 
 To create a collection, you can assign the same `tag` to various content items. Personally, I would much rather use the collection API and our trusty `eleventy.config.js` file.
 
@@ -303,7 +313,7 @@ When a collection is created, the following keys are automatically created:
 
 When you create a collection in Eleventy, its items are automatically sorted in ascending order using:
 
-1. The date specified in the filename or in the YAML front matter of the source file or the creating date on the filesystem as a fallback.
+1. The date specified in the filename or in the YAML front matter of the source file or the creation date on the filesystem as a fallback.
 2. If some files have an identical date, the full path of the file (including the filename) will be taken into account as well.
 
 If what you need is to sort your collection items by date, you are covered. You can also use the `reverse` filter in Nunjucks if needed.
@@ -314,29 +324,31 @@ By contrast, if you need to sort your team members alphabetically using the valu
 export default function (eleventyConfig) {
   // Team collection
   eleventyConfig.addCollection("team", function (collection) {
-    return collection.getFilteredByGlob("./src/team/*.md").sort((a, b) => {
-      return a.data.surname.localeCompare(b.data.surname);
-    });
+    return collection
+      .getFilteredByGlob("./src/team/*.md")
+      .sort((a, b) => a.data.surname.localeCompare(b.data.surname));
   });
 
   // ... more configuration ...
 }
 ```
 
-If you need to filter a collection to exclude some data, you can use the JavaScript `filter` method. You can for example only include the blogposts that do not have a `draft` key set to `true` in their front matter and that have a publication date less recent than site generation date.
+If you need to filter a collection to exclude some data, you can use the JavaScript `filter` method. You can for example only include the blogposts that do not have a `draft` key set to `true` in their front matter and that have a publication date less recent than site generation date. Let's sort them by most recent dates
 
 ```js
 const now = new Date();
 
-export default function(eleventyConfig) {
+export default function (eleventyConfig) {
   // blogposts collection
-  eleventyConfig.addCollection("blogposts", function(collection) {
-  return collection.getFilteredByGlob("./src/blog/*.md").filter((item) => {
-    return item.data.draft !== true && item.date <= now;
+  eleventyConfig.addCollection("blogposts", function (collection) {
+    return collection
+      .getFilteredByGlob("./src/blog/*.md")
+      .filter((item) => item.data.draft !== true && item.date <= now)
+      .reverse();
   });
 
   // ... more configuration ...
-};
+}
 ```
 
 ### Data files (JS or JSON)
@@ -429,7 +441,7 @@ Instead of having to specify the same YAML front matter key / value pair for a b
 
 If you want to specify the same key/value pair for `permalink` and `layout` for all of your blogposts, you can add a `./src/blog/blog.json`, `./src/blog/blog.11data.json` or `./src/blog/blog.11data.js` directory data file in the `./src/blog` directory and specify them there. Eleventy will apply those values to all the files in that directory or in its subdirectories.
 
-`file: ./src/blog/blog.json` or `file: ./src/blog/blog.11tydata.json`
+`file: ./src/blog/blog.json`
 
 ```json
 {
@@ -562,7 +574,7 @@ Nunjucks will allow you to use traditional control structures like `if` and `els
 When you have to display data, whether they come from an API or from Markdown files, you will have to walk through arrays or objects using `for` loops. Let's display title and introductions for all our blogposts in an HTML list.
 
 ```njk
-{% set blogposts = collections.blogposts | reverse %}
+{% set blogposts = collections.blogposts %}
 {% for entry in blogposts %}
   {% if loop.first %}<ul>{% endif %}
     <article>
@@ -675,7 +687,7 @@ As far as blogposts go, we need a special layout which will extend our base layo
 
 {% block content %}
   <main>
-    <article class="c-blogpost">
+    <div class="c-blogpost">
       <div class="c-blogpost__media">
         <picture>
             <source
@@ -706,10 +718,14 @@ As far as blogposts go, we need a special layout which will extend our base layo
         </div>
 
       </div>
-    </article>
+    </div>
   </main>
 {% endblock %}
 ```
+
+All blogposts in markdown use this `blogposts.njk` which will, in turn, extend the `base.njk` template to generate all blogposts detail pages.
+
+The blogposts files specify the layout they use using a `layout` key taking the path to the layout file as value (here `layouts/blogpost.njk`). As we have seen earlier, it is often more practical to use directory data files to spécify that `layout` key for all files in a directory.
 
 #### Pages
 
@@ -871,3 +887,7 @@ Start with the provided static templates to create a fully functional blog.
 - Generate detail pages for blogposts
 - Create an about page listing team members and providing contact details
 - Create a navigation using a data file (home, blog, about). The navigation must highlight the current section.
+
+```
+
+```

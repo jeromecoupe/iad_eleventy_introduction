@@ -132,7 +132,7 @@ Alternatively, you can ignore files using the configuration API in your `elevent
 export default function (eleventyConfig) {
   // avoid processing and watching files
   eleventyConfig.ignores.add("./src/assets/**/*");
-  eleventyConfig.watchIgnores.add("src/assets/**/*");
+  eleventyConfig.watchIgnores.add("./src/assets/**/*");
 
   // copy files / folders
   eleventyConfig.addPassthroughCopy("./src/assets/");
@@ -307,13 +307,13 @@ When a collection is created, the following keys are automatically created:
   - `page.rawInput`: raw unparsed/unrendered plaintext content for the current template
   - `page.lang`: available since 2.0 with the i18n plugin
 - `data`: all data for this piece of content. includes data inherited from layouts and YAML front-matter data.
-- `templateContent` or `content`: rendered content of this template. Does not include layout wrappers.
+- `content` or `templateContent`: rendered content of this template. Does not include layout wrappers.
 
 #### Sort and filter your collections
 
 When you create a collection in Eleventy, its items are automatically sorted in ascending order using:
 
-1. The date specified in the filename or in the YAML front matter of the source file or the creation date on the filesystem as a fallback.
+1. The date specified in the filename or in the YAML front matter of the source file. The creation date on the filesystem is used as a fallback.
 2. If some files have an identical date, the full path of the file (including the filename) will be taken into account as well.
 
 If what you need is to sort your collection items by date, you are covered. You can also use the `reverse` filter in Nunjucks if needed.
@@ -398,6 +398,8 @@ Because data files can be JavaScript files, nothing is preventing you from [conn
 
 Each time you generate your site, Eleventy will execute that script and treat the JSON file returned by the API like a static one.
 
+The [Eleventy Fetch plugin](https://www.11ty.dev/docs/plugins/fetch/) allows you to simplfy your API calls et to locally cache responses during a configurable time period.
+
 ### Permalinks and URLs
 
 By default, Eleventy will use the folders and files structure in your source directory to generate static files in your output folder.
@@ -433,7 +435,7 @@ layout: false
 ---
 ```
 
-We will see later that you will then need to use the `templateContent` key to display the content of these Markdown files.
+We will see later that you will then need to use the `content` or `templateContent` key to display the content of these Markdown files.
 
 #### Default values and directory data files
 
@@ -753,7 +755,7 @@ permalink: /about/index.html
         <article class="c-teammember">
           <img class="o-fluidimage" src="/assets/img/team/{{ member.image }}" >
           <h2 class="c-teammember__title">{{ member.name }} {{ member.surname }}</h2>
-          <div class="c-teammember__bio">{{ member.templateContent | safe }}</div>
+          <div class="c-teammember__bio">{{ member.content | safe }}</div>
           {% if member.mastodon or member.github or member.website %}
             <ul class="u-hlist  u-hlist--xs">
               {% if member.mastodon %}<li><a href="{{ member.mastodon }}">{% include "svg/icon-mastodon.svg" %}</a></li>{% endif %}

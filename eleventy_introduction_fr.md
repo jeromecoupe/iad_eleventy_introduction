@@ -127,12 +127,13 @@ Par défaut, Eleventy va ignorer le dossier `node_modules` ainsi que les dossier
 
 Nous pouvons également créer un fichier `.eleventyignore` et spécifier un dossier, fichier ou glob par ligne pour explicitement dire à Eleventy de les ignorer dans notre projet.
 
-Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via l'API de configuration et notre fichier `eleventy.config.js`. C'est ma méthode préférée. Tant que nous y sommes, nous allons aussi supprimer ces fichiers de la liste de
+Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via l'API de configuration et notre fichier `eleventy.config.js`. C'est ma méthode préférée. Tant que nous y sommes, nous allons aussi supprimer ces fichiers de la liste de watch d'Eleventy.
 
 ```js
 export default function (eleventyConfig) {
-  // avoid processing files
+  // avoid processing and watching files
   eleventyConfig.ignores.add("./src/assets/**/*");
+  eleventyConfig.watchIgnores.add("./src/assets/**/*");
 
   // copy files / folders
   eleventyConfig.addPassthroughCopy("./src/assets/");
@@ -164,9 +165,8 @@ A titre d'exemple, si vos outils de build gèrent votre CSS et votre JavaScript,
 
 ```js
 export default function (eleventyConfig) {
-  // avoid processing files
+  // avoid processing and watching files
   eleventyConfig.ignores.add("./src/assets/**/*");
-  // tell 11ty to avoid watching files
   eleventyConfig.watchIgnores.add("./src/assets/**/*");
 
   // copy files
@@ -310,16 +310,16 @@ Lorsqu'une collection est créée, les clefs suivantes sont automatiquement disp
   - `page.rawInput`: le contenu texte non parsé et non rendu
   - `page.lang`: disponible à partir de la version 2.0 avec le plugin i18n
 - `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritées des layouts.
-- `templateContent` ou `content`: le contenu du template une fois rendu par Eleventy. N'inclus pas les templates étendus.
+- `content` ou `templateContent`: le contenu du template une fois rendu par Eleventy. N'inclus pas les templates étendus.
 
 #### Classer et filtrer vos collections
 
 Lorsque vous créez une collection avec l'API d'Eleventy, les éléments de cette collection sont automatiquement classés en ordre ascendant en utilisant:
 
-1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source ou, à defaut, la date de création de celui-ci.
+1. La date renseignée dans le nom de fichier ou dans le YAML front matter du fichier source. A défaut, la date de création du fichier est utilisée.
 2. Si certains fichiers source ont une date identique, le chemin complet (y compris le nom de fichier) est pris en compte.
 
-Si un classement par date correspond à ce que vous souhaitez, vous pouvez éventuellement inverser celui-ci en utilisant le filtre `reverse` de Nunjucks.
+Si un classement par date correspond à ce que vous souhaitez, vous pouvez éventuellement inverser celui-ci en utilisant `.reverse()` en JavaScript ou le filtre `reverse` de Nunjucks.
 
 Si vous souhaitez classer alphabétiquement les membres de votre équipe sur base de la clef `surname`, le code suivant classerait ces membres de l'équipe par ordre ascendant :
 
@@ -398,6 +398,8 @@ Etant donné que les fichiers de données sont rédigés en JavaScript, rien ne 
 
 A chaque fois que votre site est généré, Eleventy exécutera ce script et traitera le JSON retourné par l'API comme un fichier de données statique.
 
+Le [plugin Eleventy Fetch](https://www.11ty.dev/docs/plugins/fetch/) vous permet de simplifier vos calls API et mettre en cache localement les réponses obtenues pendant un laps de temps déterminé.
+
 ### Permalinks et URLs
 
 Par défaut, Eleventy utilise votre structure de dossiers et vos fichiers et dans votre répertoire source pour générer des fichiers statiques dans votre dossier de sortie.
@@ -433,7 +435,7 @@ layout: false
 ---
 ```
 
-Nous verrons plus loin que vous aurez alors besoin d'utiliser `templateContent` pour afficher le contenu de vos fichiers Markdown.
+Nous verrons plus loin que vous aurez alors besoin d'utiliser `content` ou `templateContent` pour afficher le contenu de vos fichiers Markdown.
 
 #### Valeurs par défaut et fichiers de données liés aux dossiers
 
@@ -747,7 +749,7 @@ permalink: /about/index.html
         <article class="c-teammember">
           <img class="o-fluidimage" src="/assets/img/team/{{ member.image }}" >
           <h2 class="c-teammember__title">{{ member.name }} {{ member.surname }}</h2>
-          <div class="c-teammember__bio">{{ member.templateContent | safe }}</div>
+          <div class="c-teammember__bio">{{ member.content | safe }}</div>
           {% if member.mastodon or member.github or member.website %}
             <ul class="u-hlist  u-hlist--xs">
               {% if member.mastodon %}<li><a href="{{ member.mastodon }}">{% include "svg/icon-mastodon.svg" %}</a></li>{% endif %}

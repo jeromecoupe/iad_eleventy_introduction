@@ -2,11 +2,11 @@
 
 ## 1. Introduction
 
-[Eleventy](https://www.11ty.io) est un générateur de site statique (Static Site Generator ou SSG en anglais) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Cet outil vous permet de développer des sites basés sur des templates et des fichiers de données (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
+[Eleventy](https://www.11ty.dev) est un générateur de site statique (Static Site Generator ou SSG en anglais) créé et maintenu par [Zach Leatherman](https://www.zachleat.com/). Cet outil vous permet de développer des sites basés sur des templates et des fichiers de données structurés (YAML / Markdown / HTML / JSON / JS) présents dans un dossier source. Sur la base de ces fichiers, Eleventy va générer un site entièrement statique dans un dossier de destination. Vous pourrez ensuite déployer ce site sur n'importe quel serveur web.
 
-[Le but avoué d'Eleventy](https://www.11ty.io/docs/) est d'être une alternative à [Jekyll](https://jekyllrb.com/), écrite en JavaScript plutôt qu'en Ruby. Tout comme Jekyll, c'est un SSG simple à utiliser et à configurer une fois les principes de base bien compris.
+Eleventy est un projet Open Source développé en Node.js. Cette base de Node en fait un SSG approchable pour des dévelopeurs front-end, une fois les principes de base bien compris.
 
-Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tout d'abord, Eleventy étant écrit en Node, il vous permet donc d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser un [large choix de langages de templating](https://www.11ty.io/docs/languages/). Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de [Mozilla](https://www.mozilla.org).
+Node étant assez rapide, Eleventy est un SSG performant. Il est également très flexible. Tout d'abord, Eleventy étant écrit en Node, il vous permet d'utiliser facilement l'ensemble de l'écosystème NPM pour en étendre les fonctionnalités. Il vous permet également d'utiliser un [large choix de langages de templating](https://www.11ty.dev/docs/languages/). Nous utiliserons [Nunjucks](https://mozilla.github.io/nunjucks/) de [Mozilla](https://www.mozilla.org).
 
 ## 2. Installation et configuration
 
@@ -61,9 +61,11 @@ Afin que tous vos fichiers `.js` soient considérés comme utilisant la syntaxe 
 }
 ```
 
+[CommonJS et ESM](https://blog.logrocket.com/commonjs-vs-es-modules-node-js/) sont deux systèmes de modules utilisés par JavaScript pour organiser et réutiliser du code dans le cadre de projets. ESM est aujourd'hui la méthode native pour créer du code JavaScript modulaire que ce soit côté client ou côté serveur. Son principal avantage est de supporter le chargement asynchrone.
+
 #### eleventy.config.js
 
-Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au fichier de configuration `eleventy.config.js`:
+Nous allons commencer par créer une architecture de projet et configurer Eleventy grâce au [fichier de configuration](https://www.11ty.dev/docs/config/) `eleventy.config.js`:
 
 - Supprimer le dossier de destination `./_site` créé par Eleventy
 - Créer un dossier `./src` et y placer notre fichier `index.html`
@@ -74,6 +76,7 @@ Commençons par spécifier les dossiers source et de destination pour Eleventy:
 `fichier: eleventy.config.js`
 
 ```js
+// override default config object
 export const config = {
   dir: {
     input: "src",
@@ -82,11 +85,11 @@ export const config = {
 };
 ```
 
-Si nous exécutons la commande `npx @11ty/eleventy` dans notre terminal, Eleventy générera un dossier `./dist` pour y copier notre fichier `index.html`.
+Si nous exécutons la commande `npx @11ty/eleventy` dans notre terminal, Eleventy générera maintenant un dossier `./dist` pour y copier notre fichier `index.html`.
 
 ### Copier quelques fichiers tels quels
 
-Nous pouvons également utiliser ce fichier de configuration pour demander à Eleventy de copier n'importe quel fichier ou dossier depuis le dossier source jusqu'au dossier de destination via [`addPassthroughCopy`](https://www.11ty.io/docs/copy/). De bons candidats sont les assets statiques de notre projet comme les images et les fichiers de polices.
+Nous pouvons également utiliser ce fichier de configuration pour demander à Eleventy de copier n'importe quel fichier ou dossier depuis le dossier source jusqu'au dossier de destination via [`addPassthroughCopy`](https://www.11ty.dev/docs/copy/). De bons candidats sont les assets statiques de notre projet comme les images et les fichiers de polices.
 
 - créer un dossier `./src/assets/img/` et y placer quelques fichiers images optimisés
 - créer un dossier `./src/assets/fonts/` et y placer quelques fichiers de polices
@@ -131,8 +134,9 @@ Alternativement, nous pouvons spécifier les fichiers et dossier à ignorer via 
 
 ```js
 export default function (eleventyConfig) {
-  // avoid processing and watching files
+  // avoid processing files with 11ty
   eleventyConfig.ignores.add("./src/assets/**/*");
+  // avoid watching files for change with 11ty dev server
   eleventyConfig.watchIgnores.add("./src/assets/**/*");
 
   // copy files / folders
@@ -165,8 +169,9 @@ A titre d'exemple, si vos outils de build gèrent votre CSS et votre JavaScript,
 
 ```js
 export default function (eleventyConfig) {
-  // avoid processing and watching files
+  // avoid processing files with 11ty
   eleventyConfig.ignores.add("./src/assets/**/*");
+  // avoid watching files for change with 11ty dev server
   eleventyConfig.watchIgnores.add("./src/assets/**/*");
 
   // copy files
@@ -266,11 +271,13 @@ Jérôme Coupé is a looney front-end designer and teacher from Brussels, Belgiu
 
 #### Collection API
 
-Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il suffit les déclarer comme faisant partie d'une [une collection](https://www.11ty.io/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou plusieurs collections.
+Pour qu'Eleventy groupe tous ces fichiers dans un tableau et vous permette de les manipuler dans vos templates, il faut les déclarer comme faisant partie d'[une collection](https://www.11ty.dev/docs/collections/). N'importe quel élément de contenu peut faire partie d'une ou plusieurs collections.
 
-Pour créer une collection, vous pouvez assigner le même `tag` à différents éléments de contenu. Personnellement, je préfère utiliser l'API de collections et le fichier `eleventy.config.js`.
+Pour créer une collection, la méthode la plus simple est [d'assigner la même valeur à la clé `tags`](https://www.11ty.dev/docs/collections/#a-blog-example) dans le YAML front-matter de différents éléments de contenu.
 
-Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.io/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichiers correspondant à un même glob pattern.
+Personnellement, je préfère utiliser l'API de collections et le fichier `eleventy.config.js`.
+
+Cette API vous offre [différentes méthodes pour déclarer des collections](https://www.11ty.dev/docs/collections/#collection-api-methods) qui ont chacune leur utilité. Celle que j'utilise personnellement le plus est `getFilteredByGlob(glob)` qui vous permet de grouper dans une collection tous les fichiers correspondant à un même glob pattern.
 
 Si tous vos fichiers Markdown sont placés dans un dossier `./src/blog/`, créer une collection les rassemblant tous est assez simple. Il vous suffit d'ajouter le code suivant dans votre fichier `eleventy.config.js`. Tant que nous y sommes, nous allons aussi ajouter notre collection `team` pour l'équipe.
 
@@ -310,7 +317,7 @@ Lorsqu'une collection est créée, les clefs suivantes sont automatiquement disp
   - `page.rawInput`: le contenu texte non parsé et non rendu
   - `page.lang`: disponible à partir de la version 2.0 avec le plugin i18n
 - `data`: toutes les données pour cet élément de contenu. Se réfère aux champs du YAML front-matter et aux données héritées des layouts.
-- `content` ou `templateContent`: le contenu du template une fois rendu par Eleventy. N'inclus pas les templates étendus.
+- `content`: le contenu du template une fois rendu par Eleventy. N'inclus pas les templates étendus.
 
 #### Classer et filtrer vos collections
 
@@ -439,7 +446,7 @@ Nous verrons plus loin que vous aurez alors besoin d'utiliser `content` ou `temp
 
 #### Valeurs par défaut et fichiers de données liés aux dossiers
 
-Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un répertoire en utilisant des [directory data files](https://www.11ty.io/docs/data-template-dir/) en JS ou en JSON.
+Plutôt que de spécifier une valeur YAML front matter identique dans tous les fichiers d'une collection, Eleventy vous offre la possibilité de spécifier des valeurs identiques pour tous les fichiers contenus dans un répertoire en utilisant des [directory data files](https://www.11ty.dev/docs/data-template-dir/) en JS ou en JSON.
 
 Si vous devez par exemple spécifier une valeur pour `layout` et `permalink` identiques pour tous vos blogposts, vous pouvez simplement les spécifier dans un fichier `.src/blog/blog.json`, `.src/blog/blog.11data.json` ou `.src/blog/blog.11data.js`. Eleventy appliquera ces valeurs à tous les fichiers du dossier ou des dossiers enfants.
 
@@ -593,7 +600,7 @@ Notez que nous pouvons utiliser `loop.first` et `loop.last` pour seulement affic
 
 ### Layouts, includes, macros et shortcodes
 
-En plus d'un tag `{% include %}`, Nunjucks utilise l'héritage de template comme modèle de layout avec `{% extends %}`. Ce modèle permet de définir des blocks dans un template que les templates enfants vont venir surdéterminer. Les chaînes de templates peuvent être aussi longues que souhaitées.
+En plus d'un tag `{% include %}`, Nunjucks utilise [l'héritage de template](https://mozilla.github.io/nunjucks/fr/templating.html#lh-ritage-de-template) comme modèle de layout avec `{% extends %}`. Ce modèle permet de définir des blocks dans un template que les templates enfants vont venir surdéterminer. Les chaînes de templates peuvent être aussi longues que souhaitées.
 
 Les includes comme l'héritage de templates sont utilisables avec Eleventy. La seule particularité est que les templates à étendre comme les fichiers à inclure doivent impérativement tous se trouver dans le dossier d'includes que vous avez spécifié dans le fichier de configuration `eleventy.config.js`. Par défaut ce dossier est `_includes` et le chemin est relatif à votre dossier source.
 
@@ -615,7 +622,7 @@ export const config = {
 };
 ```
 
-Lorsqu'un template parent est étendu par un template enfant, les variables définies dans le template enfant sont accessibles dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquels des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilité de créer des [shortcodes](https://www.11ty.io/docs/shortcodes/).
+Lorsqu'un template parent est étendu par un template enfant, les variables définies dans le template enfant sont accessibles dans le template parent. Outre `{% extends %}` et `{% include %}`, Nunjucks vous permet d'utiliser des [macros](https://mozilla.github.io/nunjucks/templating.html#macro) qui sont de petits bouts de code réutilisables auxquels des variables peuvent être passées. Eleventy possède un concept similaire avec la possibilité de créer des [shortcodes](https://www.11ty.dev/docs/shortcodes/).
 
 Pour en revenir à notre blog, voici les layouts dont nous aurons besoin.
 
@@ -768,7 +775,7 @@ permalink: /about/index.html
 
 ### Pagination
 
-Pour la page d'archive de notre blog, nous allons utiliser la fonction de [pagination](https://www.11ty.io/docs/pagination/). Celle-ci fonctionne en spécifiant quelles sont les données à paginer (`data`), combien d'éléments doivent être affichés par page (`size`) et quel `alias` doit être utilisé pour les données une fois paginées.
+Pour la page d'archive de notre blog, nous allons utiliser la fonction de [pagination](https://www.11ty.dev/docs/pagination/). Celle-ci fonctionne en spécifiant quelles sont les données à paginer (`data`), combien d'éléments doivent être affichés par page (`size`) et quel `alias` doit être utilisé pour les données une fois paginées.
 
 `fichier: ./src/pages/blog.njk`
 
@@ -843,7 +850,7 @@ permalink: blog{% if pagination.pageNumber > 0 %}/page{{ pagination.pageNumber +
 {% endblock %}
 ```
 
-La [fonction de pagination d'Eleventy](https://www.11ty.io/docs/pagination/) est bien plus puissante qu'elle n'y parait au premier abord. Si les données pour nos blogposts provenaient d'une API, nous pourrions utiliser le fichier `./src/_data/_blogposts.js` comme source de données et la même fonction de pagination pour générer toutes les pages de détail. Il suffit de spécifier une valeur de `1` pour le paramètre `size` et de préciser un pattern de `permalink` correspondant aux URL souhaitées.
+La [fonction de pagination d'Eleventy](https://www.11ty.dev/docs/pagination/) est bien plus puissante qu'elle n'y parait au premier abord. Si les données pour nos blogposts provenaient d'une API, nous pourrions utiliser le fichier `./src/_data/_blogposts.js` comme source de données et la même fonction de pagination pour générer toutes les pages de détail. Il suffit de spécifier une valeur de `1` pour le paramètre `size` et de préciser un pattern de `permalink` correspondant aux URL souhaitées.
 
 Voici un exemple de template simplifié:
 
